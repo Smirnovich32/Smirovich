@@ -303,7 +303,7 @@ textarea{resize:vertical;min-height:96px}
 .adm{width:min(1240px,calc(100% - 32px));height:calc(100% - 32px);display:flex;flex-direction:column}
 .adm-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:18px 76px 18px 28px;border-bottom:1px solid var(--line)}
 .adm-bar h2{font:500 28px/1 var(--serif);margin-right:auto}
-.gh-login{width:min(560px,calc(100% - 32px));padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;gap:16px}
+.gh-login{align-self:center;width:min(560px,calc(100% - 32px));padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;gap:16px}
 .gh-login form{margin-top:8px}
 .tabs{display:flex;gap:6px;background:var(--soft);padding:4px;border-radius:999px}
 .tabs button{padding:10px 16px;border-radius:999px;font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
@@ -680,9 +680,9 @@ body.painting,body.painting *{user-select:none!important}
     <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
     <div class="eyebrow">Admin</div>
     <h2 class="h2">Вхід в&nbsp;<em>адмінку</em></h2>
-    <p class="lead">Вставте ключ доступу GitHub. Він зберігається лише в цьому браузері й потрібен, щоб публікувати зміни на сайті.</p>
+    <p class="lead">Введіть пароль адміністратора.</p>
     <form id="ghForm" autocomplete="off">
-      <label for="ghToken">Ключ доступу GitHub<input id="ghToken" type="password" required spellcheck="false" placeholder="github_pat_… або ghp_…"></label>
+      <label for="ghToken">Пароль<input id="ghToken" type="password" required autocomplete="current-password" spellcheck="false"></label>
       <button class="btn dark" type="submit" style="align-self:flex-start">Увійти</button>
       <div class="ok" id="ghMsg" hidden></div>
     </form>
@@ -1135,34 +1135,33 @@ function tumble(){
 let draft=null, tab='works', sel=null, confirmDel=false;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const LOCAL=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-// Publishing = one commit to GitHub; Cloudflare Pages redeploys main in about a minute.
-const GH={api:'https://api.github.com/repos/Smirnovich32/Smirovich',branch:'main',key:'smirnovich-gh-token'};
-let ghToken=null; const pending=new Map(); // blob: preview URL -> {path, blob}
-const getTok=()=>{try{return localStorage.getItem(GH.key)}catch(e){return null}};
-const setTok=v=>{try{v?localStorage.setItem(GH.key,v):localStorage.removeItem(GH.key)}catch(e){}};
-async function gh(path,opt={}){
-  const r=await fetch(GH.api+path,{...opt,headers:{Authorization:'Bearer '+ghToken,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{}),...opt.headers}});
-  if(!r.ok){const e=new Error('gh '+r.status);e.status=r.status;try{e.msg=(await r.json()).message}catch(_){};throw e}
-  return opt.raw?r.text():r.json();
+// Login and publishing go through Cloudflare Pages Functions (/api/login, /api/publish); the password and
+// GitHub token are Cloudflare secrets, so the page only keeps a signed session token.
+const SESSION_KEY='smirnovich-admin-session';
+let session=null; const pending=new Map(); // blob: preview URL -> {path, blob}
+const getTok=()=>{try{return localStorage.getItem(SESSION_KEY)}catch(e){return null}};
+const setTok=v=>{try{v?localStorage.setItem(SESSION_KEY,v):localStorage.removeItem(SESSION_KEY)}catch(e){}};
+async function api(path,body){
+  const r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json',...(session?{Authorization:'Bearer '+session}:{})},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw Object.assign(new Error(j.error||'http '+r.status),{status:r.status,code:j.error});
+  return j;
 }
-async function ghLogin(tok){
-  ghToken=tok;
-  const repo=await gh('');
-  if(!repo.permissions?.push)throw Object.assign(new Error('no push'),{status:403});
-  setTok(tok); isAdmin=true; $('adminFab').hidden=false; render(SITE);
-}
+function enterAdmin(tok){session=tok;setTok(tok);isAdmin=true;$('adminFab').hidden=false;render(SITE)}
 async function initAdmin(){
   if(LOCAL&&!location.hash.includes('admin')){isAdmin=true;$('adminFab').hidden=false;render(SITE);return}
-  const saved=getTok();
-  if(saved){try{await ghLogin(saved);return}catch(e){if(e.status===401)setTok(null)}}
+  const saved=getTok(), exp=Number((saved||'').split('.')[0]);
+  if(saved&&exp>Date.now())return enterAdmin(saved);
+  setTok(null);
   if(location.hash==='#admin')openDlg($('ghLoginDlg'));
 }
 $('ghForm').onsubmit=async e=>{
-  e.preventDefault(); const m=$('ghMsg'); m.hidden=false; m.textContent='Перевіряю ключ…';
-  try{await ghLogin($('ghToken').value.trim()); $('ghToken').value=''; $('ghLoginDlg').close(); history.replaceState(null,'',location.pathname); $('adminFab').click()}
-  catch(err){m.textContent=err.status===401?'Ключ не підходить. Перевірте, що скопіювали його повністю.':err.status===403||err.status===404?'Цей ключ не має права змінювати репозиторій Smirovich. Створіть ключ за інструкцією.':'Не вдалося перевірити ключ. Перевірте інтернет і спробуйте ще раз.'}
+  e.preventDefault(); const m=$('ghMsg'), btn=e.target.querySelector('[type=submit]'); m.hidden=false; m.textContent='Перевіряю пароль…'; btn.disabled=true;
+  try{const {token}=await api('login',{password:$('ghToken').value}); $('ghToken').value=''; $('ghLoginDlg').close(); history.replaceState(null,'',location.pathname); enterAdmin(token); $('adminFab').click()}
+  catch(err){m.textContent=err.status===401?'Неправильний пароль.':err.code==='not_configured'?'Адмінку ще не налаштовано в Cloudflare (немає пароля або ключа GitHub).':'Не вдалося увійти. Перевірте інтернет і спробуйте ще раз.'}
+  btn.disabled=false;
 };
-$('admLogout').onclick=()=>{setTok(null);ghToken=null;isAdmin=false;$('adminDlg').close();$('adminFab').hidden=true;render(SITE)};
+$('admLogout').onclick=()=>{setTok(null);session=null;isAdmin=false;$('adminDlg').close();$('adminFab').hidden=true;render(SITE)};
 addEventListener('hashchange',()=>{if(location.hash==='#admin'&&!isAdmin)openDlg($('ghLoginDlg'))});
 initAdmin();initAdmin();
 
@@ -1280,38 +1279,29 @@ async function uploadPhoto(w,file){
 }
 
 const b64=blob=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(blob)});
-const DATA_RE=/(<script type="application\/json" id="site-data">)([\s\S]*?)(<\/script>)/;
-async function ghPublish(data){
-  const ref=await gh('/git/ref/heads/'+GH.branch), head=ref.object.sha;
-  const commit=await gh('/git/commits/'+head);
-  const html=await gh('/contents/index.html?ref='+head,{raw:true,headers:{Accept:'application/vnd.github.raw+json'}});
-  const m=html.match(DATA_RE); if(!m)throw Object.assign(new Error('no data block'),{status:0});
-  if(JSON.stringify(JSON.parse(m[2]))!==JSON.stringify(SITE))throw Object.assign(new Error('stale'),{status:409});
-  const out=clone(data), tree=[], used=new Map();
-  for(const w of out.works){const p=pending.get(w.img);if(p){used.set(w.img,p);w.img=p.path}}
-  for(const p of used.values())tree.push({path:p.path,mode:'100644',type:'blob',sha:(await gh('/git/blobs',{method:'POST',body:JSON.stringify({content:await b64(p.blob),encoding:'base64'})})).sha});
-  const page=html.replace(DATA_RE,(_,a,__,c)=>a+JSON.stringify(out).replace(/</g,'\\u003c')+c);
-  tree.push({path:'index.html',mode:'100644',type:'blob',content:page});
-  const t=await gh('/git/trees',{method:'POST',body:JSON.stringify({base_tree:commit.tree.sha,tree})});
-  const c=await gh('/git/commits',{method:'POST',body:JSON.stringify({message:'Оновлення сайту з адмінки',tree:t.sha,parents:[head]})});
-  await gh('/git/refs/heads/'+GH.branch,{method:'PATCH',body:JSON.stringify({sha:c.sha})});
+async function publishSite(data){
+  const out=clone(data), images=[];
+  for(const w of out.works){const p=pending.get(w.img);if(p){w.img=p.path;if(!images.some(i=>i.path===p.path))images.push({path:p.path,b64:await b64(p.blob)})}}
+  await api('publish',{data:out,base:SITE,images});
   return out;
 }
 $('admSave').onclick=async()=>{
   if(draft.works.some(w=>!w.img)){status('У деяких робіт немає фото. Додайте фото або видаліть ці роботи.',true);return}
-  if(!ghToken){status('Увійдіть з ключем GitHub, щоб публікувати.',true);return}
+  if(!session){status(LOCAL?'Це локальний перегляд: публікація працює лише на сайті.':'Увійдіть з паролем, щоб публікувати.',true);return}
   $('admSave').disabled=true; status('Публікую…');
   try{
-    const saved=await ghPublish(draft);
+    const saved=await publishSite(draft);
     for(const k of pending.keys())URL.revokeObjectURL(k); pending.clear();
     SITE.works=saved.works; SITE.top=saved.top; SITE.sales=saved.sales; draft=clone(SITE);
     render(SITE); drawAdmin(); setDirty(false);
     status('Опубліковано. Сайт оновиться приблизно за 1–2 хвилини.');
   }catch(err){
+    if(err.status===401){setTok(null);session=null}
     status(err.status===409?'Сайт уже змінили з іншого місця. Оновіть сторінку й внесіть зміни ще раз.'
-      :err.status===401?'Ключ GitHub більше не діє. Натисніть «Вийти» й увійдіть з новим ключем.'
-      :err.status===403||err.status===404?'Ключ не має права змінювати репозиторій.'
-      :err.status===422?'GitHub не прийняв зміни. Оновіть сторінку й спробуйте ще раз.'
+      :err.status===401?'Сеанс завершився. Натисніть «Вийти» й увійдіть з паролем ще раз.'
+      :err.code==='github_token'?'Ключ GitHub у налаштуваннях Cloudflare не діє або не має доступу до репозиторію.'
+      :err.code==='not_configured'?'Адмінку ще не налаштовано в Cloudflare.'
+      :err.code==='conflict'?'GitHub не прийняв зміни. Оновіть сторінку й спробуйте ще раз.'
       :'Не вдалося опублікувати. Перевірте інтернет і спробуйте ще раз.',true);
     $('admSave').disabled=false;
   }
