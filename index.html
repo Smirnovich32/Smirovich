@@ -601,6 +601,9 @@ input,textarea{cursor:text}
       <div class="eyebrow">Запит</div>
       <div class="chosen" id="chosen" hidden><img id="chImg" alt=""><div><b id="chTitle"></b><span id="chSub"></span></div></div>
       <form id="form">
+        <input type="hidden" name="access_key" value="326bdbfe-39f6-48ea-b46d-ab584dbd31fe">
+        <input type="hidden" name="from_name" value="Smirnovich — сайт">
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <label for="fName">Ім'я<input id="fName" name="name" required autocomplete="name"></label>
         <label for="fContact">Телефон або e-mail<input id="fContact" name="contact" required></label>
         <label for="workSelect">Робота<select id="workSelect" name="work"></select></label>
@@ -841,8 +844,24 @@ document.addEventListener('pointerdown',e=>{
 document.addEventListener('keydown',e=>{if($('workDlg').open&&e.key==='ArrowLeft')step(-1);if($('workDlg').open&&e.key==='ArrowRight')step(1)});
 new MutationObserver(()=>document.body.style.overflow=document.querySelector('dialog[open]')?'hidden':'').observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['open']});
 
-// ponytail: form has no backend yet; wire to Formspree/Telegram bot when contacts are final
-$('form').onsubmit=e=>{e.preventDefault();$('ok').hidden=false;e.target.reset();$('chosen').hidden=true};
+// Contact form → Web3Forms (delivers to the inbox tied to the access key). No page reload.
+$('form').onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.target, btn=f.querySelector('[type=submit]'), ok=$('ok');
+  const data=Object.fromEntries(new FormData(f));
+  const w=byId[data.work];
+  data.work=w?[w.t,w.z,w.st==='s'?'':(cur(w)?$$(cur(w)):'')].filter(Boolean).join(' · '):'Загальне питання / замовлення';
+  data.subject='Запит із сайту Smirnovich: '+data.work;
+  if(/@/.test(data.contact))data.replyto=data.contact.trim();
+  btn.disabled=true; ok.hidden=false; ok.textContent='Надсилаємо…';
+  try{
+    const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.success){ok.textContent='Дякуємо! Автор зв’яжеться з вами найближчим часом.';f.reset();$('chosen').hidden=true}
+    else ok.textContent='Не вдалося надіслати запит'+(j.message?': '+j.message:'')+'. Спробуйте ще раз трохи пізніше.';
+  }catch(err){ok.textContent='Не вдалося надіслати запит. Перевірте з’єднання з інтернетом і спробуйте ще раз.'}
+  btn.disabled=false;
+};
 
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
