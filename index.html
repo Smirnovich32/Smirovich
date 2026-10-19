@@ -28,8 +28,8 @@ img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.wrap{max-width:1360px;margin:0 auto;padding-inline:16px}
-@media(min-width:700px){.wrap{padding-inline:28px}}
+.wrap{max-width:3200px;margin:0 auto;padding-inline:16px}
+@media(min-width:700px){.wrap{padding-inline:clamp(28px,2.2vw,64px)}}
 .card{background:var(--card);border-radius:var(--r);overflow:hidden}
 .eyebrow{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3)}
 .h2{font:400 clamp(38px,5vw,68px)/1 var(--serif);letter-spacing:-.01em;text-wrap:balance}
@@ -364,9 +364,16 @@ textarea{resize:vertical;min-height:96px}
 
 /* tumbleweed painting */
 .tumble{position:fixed;left:0;top:0;width:var(--sz);height:var(--sz);z-index:40;pointer-events:none}
-.tumble .hop{will-change:transform}
-.tumble button{display:block;width:var(--sz);height:var(--sz);padding:5px;background:var(--card);border-radius:12px;box-shadow:0 16px 28px -14px rgba(0,0,0,.55);pointer-events:auto;will-change:transform}
-.tumble img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.tumble .hop{position:relative;width:var(--sz);height:var(--sz);will-change:transform}
+.tb,.tfly{display:block;width:var(--sz);height:var(--sz);padding:5px;background:var(--card);border-radius:12px;box-shadow:0 16px 28px -14px rgba(0,0,0,.55)}
+.tb{pointer-events:auto;will-change:transform;transition:box-shadow .3s}
+.tumble:hover .tb{box-shadow:0 22px 40px -14px rgba(0,0,0,.6),0 0 0 2px var(--ink)}
+.tb img,.tfly img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.tclose{position:absolute;top:-12px;right:-12px;z-index:2;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;pointer-events:auto;opacity:0;transform:scale(.6);transition:opacity .25s,transform .3s var(--ease);box-shadow:0 6px 14px -6px rgba(0,0,0,.5)}
+.tclose svg{width:12px;height:12px}
+.tumble:hover .tclose,.tclose:focus-visible{opacity:1;transform:none}
+@media(hover:none){.tclose{opacity:1;transform:none}}
+.tfly{position:fixed;z-index:45;pointer-events:none;will-change:transform}
 .tumble .dust{position:absolute;left:50%;bottom:-6px;width:70%;height:10px;margin-left:-35%;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(4px)}
 
 /* brush cursor + paint splat */
@@ -379,6 +386,28 @@ input,textarea{cursor:text}
 .splash i{position:absolute;left:0;top:0;border-radius:50%;background:currentColor;will-change:transform}
 @keyframes splatIn{from{transform:scale(.1) rotate(var(--rot))}to{transform:scale(1) rotate(var(--rot))}}
 @keyframes splashOut{to{opacity:0}}
+
+/* wide screens: the layout fills the window, type and grids grow with it */
+@media(min-width:1600px){
+  body{font-size:16px}
+  :root{--gap:24px;--pad:clamp(48px,3.4vw,110px)}
+  .h2{font-size:clamp(68px,4.2vw,120px)}
+  .lead{font-size:clamp(23px,1.45vw,36px)}
+  .hero h1{font-size:clamp(124px,7.4vw,230px)}
+  .hero-text{min-height:min(86vh,1100px)}
+  .hero .lead{max-width:none}
+  .statement .card{padding:clamp(36px,2.4vw,64px)}
+  .statement h3{font-size:clamp(25px,1.5vw,38px)}
+  .statement p,.coll p{font-size:clamp(14px,.85vw,19px)}
+  .track{grid-auto-columns:clamp(380px,23%,720px)}
+  .slide h3{font-size:clamp(24px,1.4vw,36px)}
+  .cat-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .coll h3{font-size:clamp(30px,1.8vw,48px)}
+  .work h4{font-size:clamp(20px,1.1vw,28px)}
+  .wv{width:min(1800px,calc(100% - 64px));height:min(1150px,calc(100% - 64px))}
+}
+@media(min-width:2200px){.cat-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.track{grid-auto-columns:clamp(380px,18.5%,760px)}}
+@media(min-width:2900px){.cat-grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
 
 /* motion */
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -974,22 +1003,46 @@ setTrack(0);
 
 /* ---------- Tumbleweed: now and then one painting rolls across the page like a tumbleweed; click it to open ---------- */
 function tumble(){
-  if(document.hidden||document.querySelector('dialog[open]')||!W.length)return;
+  if(document.hidden||document.querySelector('dialog[open]')||document.querySelector('.tumble,.tfly')||!W.length)return;
   const w=W[Math.random()*W.length|0], sz=Math.round(Math.min(130,Math.max(80,innerWidth*.09)));
   const ltr=Math.random()<.5, dist=innerWidth+sz*2, dur=Math.max(6000,dist*7);
   const y=innerHeight-sz-40-Math.random()*Math.min(220,innerHeight*.3);
   const el=document.createElement('div');el.className='tumble';el.style.setProperty('--sz',sz+'px');
-  el.innerHTML='<div class="hop"><button type="button" aria-label="'+esc(w.t)+'"><img src="'+esc(w.img)+'" alt=""></button></div><span class="dust"></span>';
-  el.querySelector('button').onclick=()=>{el.remove();openWork(w.id)};
+  el.innerHTML='<div class="hop"><button type="button" class="tb" aria-label="Відкрити «'+esc(w.t)+'»"><img src="'+esc(w.img)+'" alt=""></button>'
+    +'<button type="button" class="tclose" aria-label="Прибрати"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l8 8M10 2L2 10"/></svg></button></div><span class="dust"></span>';
   document.body.append(el);
+  const tb=el.querySelector('.tb');
   const x0=ltr?-sz*1.5:innerWidth+sz*.5, x1=ltr?innerWidth+sz*.5:-sz*1.5;
   const run=el.animate([{transform:`translate(${x0}px,${y}px)`},{transform:`translate(${x1}px,${y}px)`}],{duration:dur,easing:'linear'});
   const hops=[];const n=5+Math.random()*3|0;
   for(let i=0;i<=n;i++){const up=i%2?-(30+Math.random()*60)*(1-i/n/2):0;hops.push({transform:`translateY(${up}px)`,easing:i%2?'cubic-bezier(.5,0,.8,.5)':'cubic-bezier(.2,.5,.5,1)'})}
-  el.querySelector('.hop').animate(hops,{duration:dur,easing:'linear'});
   const turns=dist/(Math.PI*sz)*360*(ltr?1:-1);
-  el.querySelector('button').animate([{transform:'rotate(0deg)'},{transform:`rotate(${turns}deg)`}],{duration:dur,easing:'linear'});
+  const anims=[run,el.querySelector('.hop').animate(hops,{duration:dur,easing:'linear'}),tb.animate([{transform:'rotate(0deg)'},{transform:`rotate(${turns}deg)`}],{duration:dur,easing:'linear'})];
   run.onfinish=()=>el.remove();
+  // hover stops it; leaving lets it roll on
+  el.addEventListener('mouseenter',()=>anims.forEach(a=>a.pause()));
+  el.addEventListener('mouseleave',()=>{if(el.isConnected&&!el.dataset.gone)anims.forEach(a=>a.play())});
+  el.querySelector('.tclose').onclick=()=>{
+    el.dataset.gone=1; anims.forEach(a=>a.pause());
+    el.querySelector('.hop').animate([{opacity:1,transform:getComputedStyle(el.querySelector('.hop')).transform},{opacity:0,transform:'translateY(30px) scale(.4)'}],{duration:350,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove();
+  };
+  tb.onclick=()=>{
+    // spin up, grow towards the centre, then open the painting
+    el.dataset.gone=1; anims.forEach(a=>a.pause());
+    const r=tb.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+    const v=(getComputedStyle(tb).transform.match(/matrix\(([^)]+)\)/)||[,'1,0'])[1].split(',').map(Number);
+    const ang=Math.atan2(v[1],v[0])*180/Math.PI, end=Math.ceil(ang/360)*360+720;
+    const fly=document.createElement('div'); fly.className='tfly'; fly.style.setProperty('--sz',sz+'px');
+    fly.style.left=(cx-sz/2)+'px'; fly.style.top=(cy-sz/2)+'px'; fly.innerHTML='<img src="'+esc(w.img)+'" alt="">';
+    document.body.append(fly); el.remove();
+    const s=Math.min(innerWidth,innerHeight)*.6/sz, dx=innerWidth/2-cx, dy=innerHeight/2-cy;
+    const a=fly.animate([
+      {transform:`translate(0,0) rotate(${ang}deg) scale(1)`},
+      {transform:`translate(${dx*.45}px,${dy*.45-50}px) rotate(${(ang+end)/2}deg) scale(${(1+s)/2.4})`,offset:.55},
+      {transform:`translate(${dx}px,${dy}px) rotate(${end}deg) scale(${s})`}
+    ],{duration:950,easing:'cubic-bezier(.55,0,.2,1)',fill:'forwards'});
+    a.onfinish=()=>{openWork(w.id);fly.animate([{opacity:1},{opacity:0}],{duration:300,fill:'forwards'}).onfinish=()=>fly.remove()};
+  };
 }
 {
   const nextTumble=d=>setTimeout(()=>{tumble();nextTumble(22000+Math.random()*23000)},d);
