@@ -1,5 +1,5 @@
 // POST /api/publish  Authorization: Bearer <token from /api/login>
-// body {data, base, images:[{path, b64}]} -> one commit to main; Cloudflare Pages then redeploys the site.
+// body {data, base, images:[{path, b64}]} (images may include portfolio.pdf) -> one commit to main; Cloudflare Pages then redeploys the site.
 const enc = new TextEncoder();
 const REPO = 'Smirnovich32/Smirovich';
 const BRANCH = 'main';
@@ -29,7 +29,8 @@ export async function onRequestPost({ request, env }) {
   try { body = await request.json(); } catch (_) { return json({ error: 'bad_request' }, 400); }
   const { data, base, images = [] } = body || {};
   if (!data || !Array.isArray(data.works) || !Array.isArray(data.top) || !Array.isArray(data.sales)) return json({ error: 'bad_request' }, 400);
-  for (const im of images) if (!/^images\/[a-z0-9-]+\.jpg$/i.test(im.path || '') || typeof im.b64 !== 'string') return json({ error: 'bad_request' }, 400);
+  // only new photos and the portfolio PDF may be written besides index.html
+  for (const im of images) if (!/^(images\/[a-z0-9-]+\.jpg|portfolio\.pdf)$/i.test(im.path || '') || typeof im.b64 !== 'string') return json({ error: 'bad_request' }, 400);
 
   const gh = async (path, opt = {}) => {
     const r = await fetch('https://api.github.com/repos/' + REPO + path, {
