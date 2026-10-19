@@ -293,6 +293,8 @@ textarea{resize:vertical;min-height:96px}
 .adm{width:min(1240px,calc(100% - 32px));height:calc(100% - 32px);display:flex;flex-direction:column}
 .adm-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:18px 76px 18px 28px;border-bottom:1px solid var(--line)}
 .adm-bar h2{font:500 28px/1 var(--serif);margin-right:auto}
+.gh-login{width:min(560px,calc(100% - 32px));padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;gap:16px}
+.gh-login form{margin-top:8px}
 .tabs{display:flex;gap:6px;background:var(--soft);padding:4px;border-radius:999px}
 .tabs button{padding:10px 16px;border-radius:999px;font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 .tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
@@ -630,11 +632,25 @@ input,textarea{cursor:text}
   <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
 </button>
 <button class="admin-fab" id="adminFab" hidden><i></i>Адмінка</button>
+<dialog id="ghLoginDlg">
+  <div class="pop gh-login">
+    <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    <div class="eyebrow">Admin</div>
+    <h2 class="h2">Вхід в&nbsp;<em>адмінку</em></h2>
+    <p class="lead">Вставте ключ доступу GitHub. Він зберігається лише в цьому браузері й потрібен, щоб публікувати зміни на сайті.</p>
+    <form id="ghForm" autocomplete="off">
+      <label for="ghToken">Ключ доступу GitHub<input id="ghToken" type="password" required spellcheck="false" placeholder="github_pat_… або ghp_…"></label>
+      <button class="btn dark" type="submit" style="align-self:flex-start">Увійти</button>
+      <div class="ok" id="ghMsg" hidden></div>
+    </form>
+  </div>
+</dialog>
 <dialog id="adminDlg">
   <div class="pop adm">
     <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
     <div class="adm-bar">
       <h2>Адмінпанель</h2>
+      <button class="btn sm" id="admLogout" type="button">Вийти</button>
       <div class="tabs" id="admTabs">
         <button data-tab="works" class="on">Роботи</button>
         <button data-tab="top">Топ робіт</button>
@@ -980,20 +996,39 @@ function tumble(){
 }
 
 /* ---------- Admin panel: shown only to people who can edit this page ---------- */
-let draft=null, tab='works', sel=null, artifactNs=null, assetsNs=null, confirmDel=false;
+let draft=null, tab='works', sel=null, confirmDel=false;
 const clone=o=>JSON.parse(JSON.stringify(o));
-const LOCAL=!window.claude&&/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-async function initAdmin(){
-  let can=LOCAL;
-  if(window.claude?.use){
-    const [user,art,as]=await Promise.all(['user','artifact','assets'].map(n=>window.claude.use(n).catch(()=>null)));
-    artifactNs=art; assetsNs=as;
-    can=!!art&&(user?(user.canEdit()||user.isOwner()):!!as);
-  }
-  if(!can)return;
-  isAdmin=true; $('adminFab').hidden=false; render(SITE);
+const LOCAL=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+// Publishing = one commit to GitHub; Cloudflare Pages redeploys main in about a minute.
+const GH={api:'https://api.github.com/repos/Smirnovich32/Smirovich',branch:'main',key:'smirnovich-gh-token'};
+let ghToken=null; const pending=new Map(); // blob: preview URL -> {path, blob}
+const getTok=()=>{try{return localStorage.getItem(GH.key)}catch(e){return null}};
+const setTok=v=>{try{v?localStorage.setItem(GH.key,v):localStorage.removeItem(GH.key)}catch(e){}};
+async function gh(path,opt={}){
+  const r=await fetch(GH.api+path,{...opt,headers:{Authorization:'Bearer '+ghToken,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{}),...opt.headers}});
+  if(!r.ok){const e=new Error('gh '+r.status);e.status=r.status;try{e.msg=(await r.json()).message}catch(_){};throw e}
+  return opt.raw?r.text():r.json();
 }
-initAdmin();
+async function ghLogin(tok){
+  ghToken=tok;
+  const repo=await gh('');
+  if(!repo.permissions?.push)throw Object.assign(new Error('no push'),{status:403});
+  setTok(tok); isAdmin=true; $('adminFab').hidden=false; render(SITE);
+}
+async function initAdmin(){
+  if(LOCAL&&!location.hash.includes('admin')){isAdmin=true;$('adminFab').hidden=false;render(SITE);return}
+  const saved=getTok();
+  if(saved){try{await ghLogin(saved);return}catch(e){if(e.status===401)setTok(null)}}
+  if(location.hash==='#admin')openDlg($('ghLoginDlg'));
+}
+$('ghForm').onsubmit=async e=>{
+  e.preventDefault(); const m=$('ghMsg'); m.hidden=false; m.textContent='Перевіряю ключ…';
+  try{await ghLogin($('ghToken').value.trim()); $('ghToken').value=''; $('ghLoginDlg').close(); history.replaceState(null,'',location.pathname); $('adminFab').click()}
+  catch(err){m.textContent=err.status===401?'Ключ не підходить. Перевірте, що скопіювали його повністю.':err.status===403||err.status===404?'Цей ключ не має права змінювати репозиторій Smirovich. Створіть ключ за інструкцією.':'Не вдалося перевірити ключ. Перевірте інтернет і спробуйте ще раз.'}
+};
+$('admLogout').onclick=()=>{setTok(null);ghToken=null;isAdmin=false;$('adminDlg').close();$('adminFab').hidden=true;render(SITE)};
+addEventListener('hashchange',()=>{if(location.hash==='#admin'&&!isAdmin)openDlg($('ghLoginDlg'))});
+initAdmin();initAdmin();
 
 function status(msg,err){const s=$('admStatus');s.textContent=msg;s.classList.toggle('err',!!err)}
 function setDirty(v){$('admSave').disabled=$('admReset').disabled=!v;$('adminFab').classList.toggle('dirty',v);
@@ -1098,9 +1133,9 @@ async function uploadPhoto(w,file){
   if(!file)return; $('admFileMsg').textContent='Завантажую…';
   try{
     const blob=await shrink(file);
-    if(assetsNs){const r=await assetsNs.upload(blob,{type:'image/jpeg'}); w.img='/_blob/'+r.id;}
-    else if(LOCAL){w.img=URL.createObjectURL(blob);}
-    else throw {code:'not_granted'};
+    const url=URL.createObjectURL(blob);
+    pending.set(url,{path:'images/'+w.id.replace(/[^a-z0-9-]/gi,'')+'-'+Date.now().toString(36)+'.jpg',blob});
+    w.img=url;
     touch(); drawEditor(); $('admFileMsg').textContent='Фото завантажено. Не забудьте опублікувати.';
   }catch(err){
     const m={too_large:'Файл завеликий (до 20 МБ).',unsupported_type:'Цей формат не підтримується. Використайте JPG або PNG.',quota_or_state:'Сховище фото заповнене.',rate_limited:'Забагато завантажень поспіль. Спробуйте за хвилину.',not_granted:'Завантаження фото тут недоступне.'}[err?.code];
@@ -1108,30 +1143,41 @@ async function uploadPhoto(w,file){
   }
 }
 
-// Republish the whole page with the edited data; template, styles and script are copied as authored.
-function buildPage(data){
-  const reset=document.head.querySelector('style')?.textContent||'';
-  const json=JSON.stringify(data).replace(/</g,'\\u003c');
-  const S='scr'+'ipt';
-  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+reset+'</style></head><body>'
-    +'<title>Smirnovich</title>\n'
-    +[...document.querySelectorAll('body link[href*="fonts.g"]')].map(l=>l.outerHTML).join('\n')+'\n'
-    +'<style id="app-css">'+$('app-css').textContent+'</style>\n'
-    +'<template id="tpl">'+tpl.innerHTML+'</template>\n'
-    +'<'+S+' type="application/json" id="site-data">'+json+'</'+S+'>\n'
-    +'<'+S+' id="app-js">'+$('app-js').textContent+'</'+S+'>'
-    +'</body></html>';
+const b64=blob=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(blob)});
+const DATA_RE=/(<script type="application\/json" id="site-data">)([\s\S]*?)(<\/script>)/;
+async function ghPublish(data){
+  const ref=await gh('/git/ref/heads/'+GH.branch), head=ref.object.sha;
+  const commit=await gh('/git/commits/'+head);
+  const html=await gh('/contents/index.html?ref='+head,{raw:true,headers:{Accept:'application/vnd.github.raw+json'}});
+  const m=html.match(DATA_RE); if(!m)throw Object.assign(new Error('no data block'),{status:0});
+  if(JSON.stringify(JSON.parse(m[2]))!==JSON.stringify(SITE))throw Object.assign(new Error('stale'),{status:409});
+  const out=clone(data), tree=[], used=new Map();
+  for(const w of out.works){const p=pending.get(w.img);if(p){used.set(w.img,p);w.img=p.path}}
+  for(const p of used.values())tree.push({path:p.path,mode:'100644',type:'blob',sha:(await gh('/git/blobs',{method:'POST',body:JSON.stringify({content:await b64(p.blob),encoding:'base64'})})).sha});
+  const page=html.replace(DATA_RE,(_,a,__,c)=>a+JSON.stringify(out).replace(/</g,'\\u003c')+c);
+  tree.push({path:'index.html',mode:'100644',type:'blob',content:page});
+  const t=await gh('/git/trees',{method:'POST',body:JSON.stringify({base_tree:commit.tree.sha,tree})});
+  const c=await gh('/git/commits',{method:'POST',body:JSON.stringify({message:'Оновлення сайту з адмінки',tree:t.sha,parents:[head]})});
+  await gh('/git/refs/heads/'+GH.branch,{method:'PATCH',body:JSON.stringify({sha:c.sha})});
+  return out;
 }
 $('admSave').onclick=async()=>{
   if(draft.works.some(w=>!w.img)){status('У деяких робіт немає фото. Додайте фото або видаліть ці роботи.',true);return}
-  if(LOCAL||!artifactNs){status('Це локальний перегляд: публікація працює лише на опублікованому сайті.',true);return}
+  if(!ghToken){status('Увійдіть з ключем GitHub, щоб публікувати.',true);return}
   $('admSave').disabled=true; status('Публікую…');
-  try{ await artifactNs.publish(buildPage(draft)); status('Опубліковано. Сторінка оновиться.'); }
-  catch(err){
-    const m={conflict:'Хтось щойно опублікував іншу версію. Сторінка перезавантажиться, внесіть зміни ще раз.',
-      not_writer:'У вас немає прав редагувати цей сайт.',not_granted:'Публікація недоступна в цьому перегляді.',
-      too_large:'Сторінка завелика для публікації.',rate_limited:'Забагато публікацій поспіль. Зачекайте хвилину.'}[err?.code];
-    status(m||'Не вдалося опублікувати. Спробуйте ще раз.',true); $('admSave').disabled=false;
+  try{
+    const saved=await ghPublish(draft);
+    for(const k of pending.keys())URL.revokeObjectURL(k); pending.clear();
+    SITE.works=saved.works; SITE.top=saved.top; SITE.sales=saved.sales; draft=clone(SITE);
+    render(SITE); drawAdmin(); setDirty(false);
+    status('Опубліковано. Сайт оновиться приблизно за 1–2 хвилини.');
+  }catch(err){
+    status(err.status===409?'Сайт уже змінили з іншого місця. Оновіть сторінку й внесіть зміни ще раз.'
+      :err.status===401?'Ключ GitHub більше не діє. Натисніть «Вийти» й увійдіть з новим ключем.'
+      :err.status===403||err.status===404?'Ключ не має права змінювати репозиторій.'
+      :err.status===422?'GitHub не прийняв зміни. Оновіть сторінку й спробуйте ще раз.'
+      :'Не вдалося опублікувати. Перевірте інтернет і спробуйте ще раз.',true);
+    $('admSave').disabled=false;
   }
 };
 </script>
