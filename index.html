@@ -386,7 +386,13 @@ textarea{resize:vertical;min-height:96px}
 html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,auto}
 a,button,label,select,[data-id],[data-coll],.coll,.track{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,pointer}
 input,textarea{cursor:text}
-.splash{position:fixed;width:0;height:0;pointer-events:none;z-index:2147483647;animation:splashOut .8s ease 1.1s forwards}
+body{overflow-x:clip}
+img{-webkit-user-drag:none;user-select:none}
+body.painting,body.painting *{user-select:none!important}
+.paint-layer{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:2147483646;overflow:visible}
+.paint-layer path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.paint-layer g.fade{animation:splashOut .8s ease 1.1s forwards}
+.splash{position:absolute;width:0;height:0;pointer-events:none;z-index:2147483647;animation:splashOut .8s ease 1.1s forwards}
 .splash .splat{position:absolute;left:-42px;top:-42px;width:84px;height:84px;animation:splatIn .32s cubic-bezier(.2,1.5,.4,1) both}
 .splash svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.22))}
 .splash i{position:absolute;left:0;top:0;border-radius:50%;background:currentColor;will-change:transform}
@@ -915,17 +921,60 @@ function droplets(wrap){
     wrap.append(el); el.animate(fr,{duration:T*1000,easing:'cubic-bezier(.25,.6,.4,1)',fill:'forwards'});
   }
 }
+// Splats stay where they landed on the page (they scroll with it); inside a popup they stay on screen.
 document.addEventListener('pointerdown',e=>{
   if(e.button!==0||e.target.closest('input,textarea'))return;
   if(!e.target.closest('#music'))slap();
+  const dlg=e.target.closest('dialog[open]');
   const w=document.createElement('div');w.className='splash';
-  w.style.left=e.clientX+'px';w.style.top=e.clientY+'px';
+  if(dlg){w.style.position='fixed';w.style.left=e.clientX+'px';w.style.top=e.clientY+'px'}
+  else{w.style.left=e.pageX+'px';w.style.top=e.pageY+'px'}
   const col=PAINT[Math.random()*PAINT.length|0]; w.style.color=col;
   w.innerHTML='<div class="splat" style="--rot:'+(Math.random()*360|0)+'deg"><svg viewBox="0 0 84 84" fill="'+col+'">'+splatPath()+'</svg></div>';
-  (e.target.closest('dialog[open]')||document.body).append(w);
+  (dlg||document.body).append(w);
   droplets(w);
   setTimeout(()=>w.remove(),2000);
+  startPaint(e,col);
 },{passive:true});
+
+// Hold the mouse and move to paint a brush stroke in the splat's colour; it fades like the splats.
+const SVGNS='http://www.w3.org/2000/svg';
+let layer=null, stroke=null, justPainted=false;
+function startPaint(e,col){
+  if(e.pointerType==='touch'||e.target.closest('dialog,.marquee,.track,select,button.tb,.tclose,.music,.admin-fab'))return;
+  stroke={col,pts:[[e.pageX,e.pageY]],g:null,moved:false};
+}
+function strokePath(pts,ox,oy){
+  if(pts.length<2)return '';
+  let d='M'+(pts[0][0]+ox).toFixed(1)+' '+(pts[0][1]+oy).toFixed(1);
+  for(let i=1;i<pts.length-1;i++){const p=pts[i],q=pts[i+1];d+=' Q'+(p[0]+ox).toFixed(1)+' '+(p[1]+oy).toFixed(1)+' '+((p[0]+q[0])/2+ox).toFixed(1)+' '+((p[1]+q[1])/2+oy).toFixed(1)}
+  const l=pts[pts.length-1];return d+' L'+(l[0]+ox).toFixed(1)+' '+(l[1]+oy).toFixed(1);
+}
+document.addEventListener('pointermove',e=>{
+  if(!stroke||!(e.buttons&1))return;
+  const p=stroke.pts[stroke.pts.length-1], x=e.pageX, y=e.pageY;
+  if(Math.hypot(x-p[0],y-p[1])<4)return;
+  if(!stroke.g){
+    if(!layer){layer=document.createElementNS(SVGNS,'svg');layer.classList.add('paint-layer');document.body.append(layer)}
+    layer.style.height=document.documentElement.scrollHeight+'px';
+    stroke.g=document.createElementNS(SVGNS,'g');stroke.g.setAttribute('stroke',stroke.col);
+    // a wide body plus two thin "bristle" lines give a painterly edge
+    stroke.g.innerHTML='<path stroke-width="10" opacity=".88"/><path stroke-width="2.4" opacity=".55"/><path stroke-width="1.6" opacity=".45"/>';
+    layer.append(stroke.g);document.body.classList.add('painting');getSelection()?.removeAllRanges();
+  }
+  stroke.pts.push([x,y]);stroke.moved=true;
+  const [a,b,c]=stroke.g.children;
+  a.setAttribute('d',strokePath(stroke.pts,0,0));b.setAttribute('d',strokePath(stroke.pts,3,-2));c.setAttribute('d',strokePath(stroke.pts,-3,2.5));
+},{passive:true});
+function endPaint(){
+  if(!stroke)return;
+  if(stroke.g){const g=stroke.g;g.classList.add('fade');setTimeout(()=>g.remove(),2000);justPainted=stroke.moved&&stroke.pts.length>3;setTimeout(()=>justPainted=false,50)}
+  stroke=null;document.body.classList.remove('painting');
+}
+addEventListener('pointerup',endPaint);addEventListener('pointercancel',endPaint);
+addEventListener('dragstart',e=>{if(stroke)e.preventDefault()});
+// a painted stroke should not also count as a click on whatever it ended on
+addEventListener('click',e=>{if(justPainted){justPainted=false;e.stopPropagation();e.preventDefault()}},true);
 document.addEventListener('keydown',e=>{if($('workDlg').open&&e.key==='ArrowLeft')step(-1);if($('workDlg').open&&e.key==='ArrowRight')step(1)});
 new MutationObserver(()=>document.body.style.overflow=document.querySelector('dialog[open]')?'hidden':'').observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['open']});
 
