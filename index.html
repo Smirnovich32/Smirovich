@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Smirnovich</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style id="app-css">
+/* Gallery wall: grey ground, white rounded cards, serif display + clean sans. Single deliberate light look. */
+:root{
+  --bg:#d6d5d2; --bg-2:#cbcac6; --card:#fff; --ink:#151515; --ink-2:#5c5c5a; --ink-3:#8f8e8a;
+  --line:#e6e5e1; --soft:#f4f3f0; --sale:#a8473a; --ok:#4f7f55;
+  --serif:"Cormorant",Georgia,"Times New Roman",serif; --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:22px; --r-sm:14px; --gap:20px; --pad:clamp(24px,4vw,64px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.7 var(--sans);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:16px}
+@media(min-width:700px){.wrap{padding-inline:28px}}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden}
+.eyebrow{font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3)}
+.h2{font:400 clamp(38px,5vw,68px)/1 var(--serif);letter-spacing:-.01em;text-wrap:balance}
+.h2 em{font-style:italic;color:var(--ink-2)}
+.lead{font:400 clamp(19px,1.7vw,23px)/1.5 var(--serif);color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;transition:background .3s,color .3s,transform .3s var(--ease)}
+.btn:hover{background:var(--ink);color:var(--card);transform:translateY(-2px)}
+.btn.dark{background:var(--ink);color:var(--card)}
+.btn.dark:hover{background:#333}
+.btn svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+.btn:hover svg{transform:translateX(4px)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+section{padding-block:var(--gap)}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px;padding:var(--pad)}
+.sec-head .eyebrow{margin-bottom:18px}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;padding-block:12px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px)}
+.nav .card{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px 12px 24px;border-radius:999px;overflow:visible}
+.logo{font:600 15px/1 var(--sans);letter-spacing:.38em}
+.logo small{display:block;font:italic 400 14px/1 var(--serif);letter-spacing:.02em;color:var(--ink-3);margin-top:5px}
+.nav ul{display:flex;gap:26px;list-style:none}
+.nav ul a{font:500 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);transition:.2s;position:relative}
+.nav ul a::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:1px;background:var(--ink);transition:right .35s var(--ease)}
+.nav ul a:hover{color:var(--ink)}
+.nav ul a:hover::after{right:0}
+.nav-actions{display:flex;gap:8px}
+.nav .btn{padding:12px 18px}
+.m-only{display:none}
+.burger{display:none;width:44px;height:44px;align-items:center;justify-content:center;border-radius:50%}
+@media(max-width:1120px){
+  .nav ul{display:none;position:absolute;top:calc(100% - 2px);left:16px;right:16px;flex-direction:column;gap:0;background:var(--card);padding:10px 24px;border-radius:var(--r);box-shadow:0 20px 40px -20px rgba(0,0,0,.3)}
+  .nav ul.open{display:flex;animation:rise .35s var(--ease)}
+  .nav ul li a{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+  .nav ul li:last-child a{border:0}
+  .burger{display:flex}
+}
+@media(max-width:640px){.nav .btn.ghost{display:none}.m-only{display:block}.nav .btn{padding:11px 14px;letter-spacing:.14em}}
+
+/* hero / author */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:var(--gap)}
+.hero-text{padding:var(--pad);display:flex;flex-direction:column;justify-content:space-between;gap:48px;min-height:min(86vh,820px)}
+.hero h1{font:italic 400 clamp(56px,8vw,124px)/.95 var(--serif);letter-spacing:-.02em;margin:26px 0 30px;overflow:hidden;color:var(--ink-2)}
+.hero h1 span{display:inline-block;animation:lineUp 1.1s var(--ease) both}
+.hero .lead{max-width:520px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);padding-top:26px;gap:12px}
+.stats b{display:block;font:400 40px/1 var(--serif);font-variant-numeric:tabular-nums}
+.stats span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.hero-img{position:relative;min-height:520px;background:#efefed}
+.hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05);animation:kenburns 18s ease-out both}
+.hero-img figcaption{position:absolute;left:28px;bottom:26px;right:28px;display:flex;justify-content:space-between;align-items:end;font:italic 400 17px/1.3 var(--serif);color:var(--ink-2)}
+.hero-sign{font:italic 400 34px/1 var(--serif);color:var(--ink)}
+.intro>*{animation:rise 1s var(--ease) both}
+.intro>*:nth-child(2){animation-delay:.1s}.intro>*:nth-child(3){animation-delay:.25s}.intro>*:nth-child(4){animation-delay:.4s}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-text{min-height:0}.stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}}
+
+.statement{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.statement .card{padding:36px;transition:transform .5s var(--ease),box-shadow .5s}
+.statement .card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(0,0,0,.35)}
+.statement .num{font:italic 400 15px/1 var(--serif);color:var(--ink-3)}
+.statement h3{font:500 25px/1.15 var(--serif);margin:16px 0 12px}
+.statement p{color:var(--ink-2);font-size:14px}
+@media(max-width:900px){.statement{grid-template-columns:1fr}}
+
+.marquee{margin-top:var(--gap);padding-block:22px;overflow:hidden;white-space:nowrap;border-radius:999px;background:var(--ink);color:var(--card)}
+.marquee div{display:inline-flex;gap:48px;padding-right:48px;animation:marq 38s linear infinite;font:italic 400 28px/1 var(--serif)}
+.marquee span{display:inline-flex;align-items:center;gap:48px}
+.marquee span::after{content:"✦";font:400 12px/1 var(--sans);opacity:.5}
+.marquee:hover div{animation-play-state:paused}
+
+/* carousels */
+.car-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px;padding:var(--pad)}
+.car-head .eyebrow{margin-bottom:18px}
+.car-nav{display:flex;align-items:center;gap:10px}
+.car-nav button{width:54px;height:54px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:.3s var(--ease)}
+.car-nav button:hover{background:var(--ink);border-color:var(--ink);color:var(--card);transform:scale(1.06)}
+.car-nav svg{width:16px;height:16px}
+.car-prog{width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-right:10px}
+.car-prog i{display:block;height:100%;width:30%;background:var(--ink);border-radius:2px;transition:transform .4s var(--ease)}
+.track{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(270px,31%,440px);gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;margin-top:var(--gap);padding-bottom:6px;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.slide{scroll-snap-align:start;cursor:pointer;display:flex;flex-direction:column;position:relative;transition:transform .5s var(--ease),box-shadow .5s}
+.slide:hover{transform:translateY(-6px);box-shadow:0 30px 50px -30px rgba(0,0,0,.4)}
+.slide .img{aspect-ratio:4/5;max-width:100%;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:clamp(22px,3vw,40px);overflow:hidden;margin:8px;border-radius:var(--r-sm)}
+.slide img{max-height:100%;object-fit:contain;box-shadow:0 18px 36px -18px rgba(0,0,0,.5);transition:transform .9s var(--ease)}
+.slide:hover img{transform:scale(1.06)}
+.slide .meta{padding:14px 24px 24px;display:flex;flex-direction:column;gap:4px;flex:1}
+.slide h3{font:500 24px/1.1 var(--serif);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.slide .sub{font-size:12px;color:var(--ink-3)}
+.slide .foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.slide .rank{font:italic 400 18px/1 var(--serif);color:var(--ink-3)}
+.empty{padding:40px var(--pad);color:var(--ink-3);font:italic 400 20px/1.4 var(--serif)}
+@media(max-width:640px){.track{grid-auto-columns:82%;--gap:12px}.car-prog{display:none}}
+
+.pr{font:500 22px/1 var(--serif);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pr s{font-size:.75em;color:var(--ink-3);margin-right:8px}
+.pr.sale{color:var(--sale)}
+.pr.sold{color:var(--ink-3)}
+.badge{position:absolute;top:22px;left:22px;z-index:2;font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;background:var(--card);padding:9px 12px;border-radius:999px;box-shadow:0 6px 16px -8px rgba(0,0,0,.3)}
+.badge.sold{background:var(--ink);color:var(--card)}
+.badge.sale{background:var(--sale);color:var(--card)}
+
+/* collections */
+.coll-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.coll{cursor:pointer;display:flex;flex-direction:column;transition:transform .5s var(--ease),box-shadow .5s}
+.coll:hover{transform:translateY(-6px);box-shadow:0 30px 50px -30px rgba(0,0,0,.4)}
+.coll .covers{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:6px;aspect-ratio:4/3;max-width:100%;padding:8px 8px 0}
+.coll .covers div{overflow:hidden;border-radius:var(--r-sm);background:var(--soft)}
+.coll .covers div:first-child{grid-row:span 2}
+.coll .covers img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.coll:hover .covers img{transform:scale(1.07)}
+.coll .body{padding:24px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
+.coll .count{font:italic 400 15px/1 var(--serif);color:var(--ink-3)}
+.coll h3{font:500 30px/1.05 var(--serif)}
+.coll p{color:var(--ink-2);font-size:14px;flex:1}
+.coll .more{font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-top:8px}
+.coll .more i{display:block;height:1px;width:28px;background:currentColor;transition:width .4s var(--ease)}
+.coll:hover .more i{width:56px}
+.coll.portfolio{background:var(--ink);color:var(--card);justify-content:space-between;padding:32px}
+.coll.portfolio p{color:#bdbcb8;flex:0}
+.coll.portfolio .big{font:italic 400 clamp(60px,7vw,96px)/.9 var(--serif)}
+@media(max-width:1020px){.coll-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.coll-grid{grid-template-columns:1fr}}
+
+/* catalogue */
+.filters{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--pad) var(--pad)}
+.filters button{padding:11px 18px;border:1px solid var(--line);font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);transition:.25s;border-radius:40px}
+.filters button:hover{border-color:var(--ink)}
+.filters button.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.filters sup{font-size:9px;margin-left:4px;opacity:.6}
+.cat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.work{cursor:pointer;position:relative;display:flex;flex-direction:column;transition:transform .5s var(--ease),box-shadow .5s}
+.work:hover{transform:translateY(-5px);box-shadow:0 26px 44px -28px rgba(0,0,0,.4)}
+.work .img{aspect-ratio:1;max-width:100%;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:28px;overflow:hidden;margin:6px;border-radius:var(--r-sm)}
+.work img{max-height:100%;object-fit:contain;box-shadow:0 12px 26px -14px rgba(0,0,0,.5);transition:transform .8s var(--ease)}
+.work:hover img{transform:scale(1.06)}
+.work .meta{padding:12px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.work h4{font:500 20px/1.15 var(--serif);overflow-wrap:break-word;hyphens:auto}
+.work .sub{font-size:12px;color:var(--ink-3)}
+.work .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:12px}
+.work .pr{font-size:19px}
+.st{display:flex;align-items:center;gap:7px;color:var(--ink-2);font-size:10px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.st.sold::before{background:#b44}
+.st.res::before{background:#c9a24a}
+.work .badge{top:16px;left:16px}
+@media(max-width:1100px){.cat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr));--gap:12px}.work .img{padding:16px}.work .row{flex-direction:column;align-items:flex-start;gap:6px}.work .meta{padding:10px 12px 14px}}
+.work.hide{display:none}
+
+/* cv */
+.cv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--gap);margin-top:var(--gap)}
+.cv .card{padding:var(--pad)}
+.tl{list-style:none}
+.tl li{display:grid;grid-template-columns:140px 1fr;gap:20px;padding-block:22px;border-bottom:1px solid var(--line)}
+.tl li:first-child{padding-top:0}
+.tl li:last-child{border:0}
+.tl time{font:italic 400 20px/1.2 var(--serif);color:var(--ink-3)}
+.tl b{display:block;font:500 22px/1.2 var(--serif)}
+.tl span{font-size:13px;color:var(--ink-2)}
+@media(max-width:900px){.cv{grid-template-columns:1fr}.tl li{grid-template-columns:1fr;gap:4px}}
+
+/* buy */
+.buy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--gap);margin-top:var(--gap)}
+.buy .card{padding:var(--pad)}
+.steps{list-style:none;counter-reset:s;margin-top:32px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:56px 1fr;padding-block:20px;border-top:1px solid var(--line)}
+.steps li::before{content:"0" counter(s);font:italic 400 26px/1 var(--serif);color:var(--ink-3)}
+.steps b{display:block;font:500 20px/1.2 var(--serif);margin-bottom:4px}
+.steps span{font-size:14px;color:var(--ink-2)}
+.cta{background:var(--ink)!important;color:var(--card);display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.cta .eyebrow{color:#9d9c98}
+.cta .h2 em{color:#bdbcb8}
+.cta p{color:#bdbcb8;max-width:440px}
+.cta .btn{border-color:var(--card);color:var(--ink);background:var(--card);align-self:flex-start}
+.cta .btn:hover{background:transparent;color:var(--card)}
+.cta .btn.line{background:transparent;color:var(--card)}
+.cta .btn.line:hover{background:var(--card);color:var(--ink)}
+.contacts{display:flex;flex-wrap:wrap;gap:12px 28px;font-size:14px}
+.contacts a,.contacts span{border-bottom:1px solid currentColor;opacity:.85}
+.contacts span{user-select:all}
+@media(max-width:900px){.buy{grid-template-columns:1fr}}
+
+footer{padding-block:40px 56px}
+footer .card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px;padding:30px var(--pad);font-size:12px;color:var(--ink-3);border-radius:999px}
+.big-name{font:400 clamp(60px,15vw,230px)/.8 var(--serif);letter-spacing:-.03em;text-align:center;color:var(--bg-2);padding-block:40px 10px;user-select:none;overflow:hidden}
+
+/* dialogs */
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%;color:var(--ink)}
+dialog::backdrop{background:rgba(30,30,29,.72);backdrop-filter:blur(8px)}
+dialog[open]{display:flex;align-items:center;justify-content:center;animation:fade .35s ease}
+.x{position:absolute;top:14px;right:14px;z-index:3;width:46px;height:46px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;transition:.3s var(--ease);box-shadow:0 6px 18px -8px rgba(0,0,0,.3)}
+.x:hover{background:var(--ink);color:var(--card);transform:rotate(90deg)}
+.x svg{width:16px;height:16px}
+.pop{position:relative;background:var(--card);border-radius:var(--r);overflow:hidden;animation:pop .5s var(--ease)}
+
+.wv{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);width:min(1320px,calc(100% - 32px));height:min(860px,calc(100% - 32px))}
+.wv .stage{position:relative;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:clamp(24px,5vw,72px);overflow:hidden;margin:10px;border-radius:var(--r-sm)}
+.wv .stage img{max-height:100%;max-width:100%;object-fit:contain;box-shadow:0 30px 60px -24px rgba(0,0,0,.5);animation:imgIn .6s var(--ease)}
+.wv .arrows{position:absolute;bottom:20px;left:20px;display:flex;gap:8px;z-index:2}
+.wv .arrows button{width:46px;height:46px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;transition:.25s}
+.wv .arrows button:hover{background:var(--ink);color:var(--card)}
+.wv .arrows svg{width:16px;height:16px}
+.wv .counter{position:absolute;bottom:34px;right:24px;font:italic 400 16px/1 var(--serif);color:var(--ink-3)}
+.wv .info{padding:clamp(28px,4vw,56px) clamp(24px,3.4vw,48px);overflow:auto;display:flex;flex-direction:column;gap:22px;min-width:0}
+.wv .info>*{animation:rise .6s var(--ease) both}
+.wv .info>*:nth-child(2){animation-delay:.05s}.wv .info>*:nth-child(3){animation-delay:.1s}.wv .info>*:nth-child(4){animation-delay:.15s}.wv .info>*:nth-child(5){animation-delay:.2s}.wv .info>*:nth-child(6){animation-delay:.25s}
+.wv .info h2{font:400 clamp(34px,3.4vw,52px)/1 var(--serif);letter-spacing:-.01em;text-wrap:balance}
+.wv .info .desc{font:400 19px/1.55 var(--serif);color:var(--ink-2);white-space:pre-line}
+.spec{border-top:1px solid var(--line)}
+.spec div{display:flex;justify-content:space-between;gap:20px;padding-block:13px;border-bottom:1px solid var(--line);font-size:13px}
+.spec dt{color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.spec dd{text-align:right}
+.price{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:6px}
+.price .pr{font-size:38px;font-weight:400}
+.wv .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.wv .note{font-size:12px;color:var(--ink-3);display:flex;gap:10px;align-items:center}
+.wv .note::before{content:"";width:18px;height:1px;background:var(--ink-3)}
+@media(max-width:900px){
+  dialog[open]{align-items:stretch}
+  .wv{grid-template-columns:1fr;height:auto;width:100%;min-height:100%;overflow:auto;border-radius:0}
+  .wv .stage{height:58vh}
+  .wv .info{overflow:visible}
+}
+
+.cv-dlg{width:min(1180px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto}
+.cv-dlg header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;padding:clamp(28px,5vw,72px);border-bottom:1px solid var(--line)}
+.cv-dlg header h2{font:400 clamp(44px,5.4vw,80px)/.95 var(--serif);margin-top:18px}
+.cv-dlg header .lead{align-self:end}
+.cv-dlg .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:clamp(20px,4vw,56px)}
+.cv-dlg .work{border:1px solid var(--line);border-radius:var(--r)}
+@media(max-width:900px){.cv-dlg header{grid-template-columns:1fr}.cv-dlg .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-dlg{width:100%;max-height:100%;border-radius:0}}
+
+.contact-dlg{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);width:min(1040px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto}
+.contact-dlg .side{background:var(--ink);color:var(--card);padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;justify-content:space-between;gap:40px;margin:10px;border-radius:var(--r-sm)}
+.contact-dlg .side .h2 em{color:#bdbcb8}
+.contact-dlg .side p{color:#bdbcb8}
+.contact-dlg .main{padding:clamp(28px,4vw,56px);min-width:0}
+.chosen{align-items:center;gap:14px;padding:10px;background:var(--soft);border-radius:var(--r-sm);margin-top:24px;display:flex}
+.chosen img{width:56px;height:56px;object-fit:cover;border-radius:10px}
+.chosen b{display:block;font:500 18px/1.2 var(--serif)}
+.chosen span{font-size:12px;color:var(--ink-3)}
+form{display:flex;flex-direction:column;gap:18px;margin-top:28px}
+label{display:flex;flex-direction:column;gap:8px;font:500 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+input,textarea,select{width:100%;font:400 16px/1.4 var(--sans);color:var(--ink);border:1px solid var(--line);padding:13px 16px;background:var(--soft);outline:none;border-radius:var(--r-sm);transition:border-color .2s,background .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--ink);background:var(--card)}
+textarea{resize:vertical;min-height:96px}
+.ok{padding:18px 20px;background:var(--soft);border-radius:var(--r-sm);font:italic 400 20px/1.4 var(--serif);animation:rise .5s var(--ease)}
+@media(max-width:800px){.contact-dlg{grid-template-columns:1fr;width:100%;max-height:100%;border-radius:0}dialog[open]:has(.contact-dlg){align-items:stretch}}
+
+/* admin */
+.admin-fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:999px;background:var(--ink);color:var(--card);font:500 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);animation:rise .6s var(--ease)}
+.admin-fab i{width:8px;height:8px;border-radius:50%;background:var(--sale);display:none}
+.admin-fab.dirty i{display:block}
+.adm{width:min(1240px,calc(100% - 32px));height:calc(100% - 32px);display:flex;flex-direction:column}
+.adm-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:18px 76px 18px 28px;border-bottom:1px solid var(--line)}
+.adm-bar h2{font:500 28px/1 var(--serif);margin-right:auto}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:4px;border-radius:999px}
+.tabs button{padding:10px 16px;border-radius:999px;font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
+.adm-body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);min-height:0}
+.adm-list{overflow:auto;border-right:1px solid var(--line);padding:14px}
+.adm-row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px;border-radius:var(--r-sm);cursor:pointer;width:100%;text-align:left}
+.adm-row:hover{background:var(--soft)}
+.adm-row.on{background:var(--soft);box-shadow:inset 0 0 0 1px var(--ink)}
+.adm-row img,.adm-row .ph{width:52px;height:52px;object-fit:cover;border-radius:10px;background:var(--line)}
+.adm-row b{display:block;font:500 17px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-row span{font-size:12px;color:var(--ink-3)}
+.adm-row .pr{font-size:17px}
+.adm-edit{overflow:auto;padding:24px 28px 40px}
+.adm-edit form{margin-top:0}
+.adm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.adm-photo{display:grid;grid-template-columns:140px minmax(0,1fr);gap:18px;align-items:center}
+.adm-photo .pv{width:140px;height:140px;border-radius:var(--r-sm);background:var(--soft);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.adm-photo .pv img{max-height:100%;object-fit:contain}
+.adm-photo p{font-size:13px;color:var(--ink-3);margin-top:8px;text-transform:none;letter-spacing:0}
+.adm-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding-top:6px}
+.btn.danger{border-color:var(--sale);color:var(--sale)}
+.btn.danger:hover{background:var(--sale);color:var(--card)}
+.btn.sm{padding:11px 16px}
+.adm-note{font-size:13px;color:var(--ink-2);background:var(--soft);padding:12px 16px;border-radius:var(--r-sm)}
+.adm-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 28px;border-top:1px solid var(--line)}
+.adm-status{font-size:13px;color:var(--ink-2)}
+.adm-status.err{color:var(--sale)}
+.pick{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:8px;border-radius:var(--r-sm);border:1px solid var(--line);margin-bottom:8px;background:var(--card)}
+.pick img{width:52px;height:52px;object-fit:cover;border-radius:10px}
+.pick b{display:block;font:500 17px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick span{font-size:12px;color:var(--ink-3)}
+.pick .ctl{display:flex;gap:6px;align-items:center}
+.pick .ctl button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.pick .ctl button:hover{background:var(--ink);color:var(--card)}
+.pick .ctl input{width:110px;padding:8px 10px}
+.confirm{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r-sm);background:#f6e8e5;color:var(--sale);font-size:13px;width:100%}
+@media(max-width:860px){
+  .adm{width:100%;height:100%;border-radius:0}
+  .adm-body{grid-template-columns:1fr;overflow:auto}
+  .adm-list{border-right:0;border-bottom:1px solid var(--line);max-height:38vh}
+  .adm-edit{overflow:visible}
+  .adm-grid{grid-template-columns:1fr}
+  .adm-bar{padding:14px 70px 14px 16px}
+  .pick{grid-template-columns:44px minmax(0,1fr)}.pick .ctl{grid-column:1/-1;justify-content:flex-end}
+}
+
+/* music */
+.music{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:999px;background:var(--card);color:var(--ink);box-shadow:0 14px 30px -14px rgba(0,0,0,.45);animation:rise .6s var(--ease);max-width:calc(100% - 40px)}
+.music .ic{width:40px;height:40px;flex:none;border-radius:50%;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .3s var(--ease)}
+.music:hover .ic{transform:scale(1.08)}
+.music svg{width:18px;height:18px}
+.music .on,.music.playing .off{display:none}
+.music.playing .on{display:block}
+.music .txt{display:flex;flex-direction:column;gap:3px;min-width:0;text-align:left}
+.music .txt b{font:italic 500 16px/1 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music .txt span{font:500 9px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:14px;flex:none}
+.bars i{width:2px;height:30%;background:var(--ink-3);border-radius:1px}
+.music.playing .bars i{animation:bar 1s ease-in-out infinite alternate}
+.music.playing .bars i:nth-child(2){animation-delay:-.4s}.music.playing .bars i:nth-child(3){animation-delay:-.7s}.music.playing .bars i:nth-child(4){animation-delay:-.2s}
+@keyframes bar{from{height:20%}to{height:100%}}
+@media(max-width:640px){.music{padding:6px}.music .txt,.music .bars{display:none}}
+
+/* tumbleweed painting */
+.tumble{position:fixed;left:0;top:0;width:var(--sz);height:var(--sz);z-index:40;pointer-events:none}
+.tumble .hop{will-change:transform}
+.tumble button{display:block;width:var(--sz);height:var(--sz);padding:5px;background:var(--card);border-radius:12px;box-shadow:0 16px 28px -14px rgba(0,0,0,.55);pointer-events:auto;will-change:transform}
+.tumble img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.tumble .dust{position:absolute;left:50%;bottom:-6px;width:70%;height:10px;margin-left:-35%;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(4px)}
+
+/* brush cursor + paint splat */
+html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,auto}
+a,button,label,select,[data-id],[data-coll],.coll,.track{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,pointer}
+input,textarea{cursor:text}
+.splash{position:fixed;width:0;height:0;pointer-events:none;z-index:2147483647;animation:splashOut .8s ease 1.1s forwards}
+.splash .splat{position:absolute;left:-42px;top:-42px;width:84px;height:84px;animation:splatIn .32s cubic-bezier(.2,1.5,.4,1) both}
+.splash svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.22))}
+.splash i{position:absolute;left:0;top:0;border-radius:50%;background:currentColor;will-change:transform}
+@keyframes splatIn{from{transform:scale(.1) rotate(var(--rot))}to{transform:scale(1) rotate(var(--rot))}}
+@keyframes splashOut{to{opacity:0}}
+
+/* motion */
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes imgIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes lineUp{from{transform:translateY(105%)}to{transform:none}}
+@keyframes kenburns{from{transform:scale(1.15)}to{transform:scale(1)}}
+@keyframes marq{to{transform:translateX(-100%)}}
+.js .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s var(--ease);transition-delay:var(--d,0s)}
+.js .reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}.hero-img img,.marquee div{animation:none}}
+</style>
+
+<template id="tpl">
+<nav class="nav">
+  <div class="wrap">
+    <div class="card">
+      <a href="#author" class="logo">SMIRNOVICH<small>Artist · Ukraine</small></a>
+      <ul id="menu">
+        <li><a href="#author">Автор</a></li>
+        <li><a href="#top">Топ робіт</a></li>
+        <li><a href="#sales">Sales</a></li>
+        <li><a href="#collections">Колекції</a></li>
+        <li><a href="#catalogue">Каталог</a></li>
+        <li><a href="#cv">Виставки</a></li>
+        <li><a href="#buy">Придбати</a></li>
+        <li class="m-only"><a data-pf target="_blank" rel="noopener">Портфоліо ↗</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn ghost" data-pf target="_blank" rel="noopener">Портфоліо ↗</a>
+        <button class="btn dark" data-contact="">Зв'язатися</button>
+        <button class="burger" id="burger" aria-label="Меню">
+          <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor"><path d="M0 1h22M0 11h22"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section id="author" style="padding-top:0">
+    <div class="hero">
+      <div class="card hero-text">
+        <div class="intro">
+          <div class="eyebrow">Мультидисциплінарний художник · Україна</div>
+          <h1><span>Smirnovich</span></h1>
+          <p class="lead">Я називаю свій метод «смислографією»: кожна робота починається не з образу, а з питання. Живопис, об'єкт, перформанс — форму обирає ідея.</p>
+          <div class="hero-actions">
+            <a href="#top" class="btn dark">Дивитись роботи <svg viewBox="0 0 14 14" fill="none" stroke="currentColor"><path d="M1 7h12M8 2l5 5-5 5"/></svg></a>
+            <a class="btn" data-pf target="_blank" rel="noopener">Портфоліо ↗</a>
+          </div>
+        </div>
+        <div class="stats intro">
+          <div><b>2021</b><span>Початок шляху</span></div>
+          <div><b>5</b><span>Серій</span></div>
+          <div><b id="countWorks">40+</b><span>Оригінальних робіт</span></div>
+          <div><b>2023</b><span>Персональна виставка</span></div>
+        </div>
+      </div>
+      <figure class="card hero-img">
+        <img src="images/author.jpg" alt="Smirnovich">
+        <figcaption><span>«Дивитися на знайоме<br>з нестандартної сторони»</span><span class="hero-sign">Smirnovich</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="statement">
+      <div class="card reveal">
+        <span class="num">i.</span>
+        <h3>Від ідеї до форми</h3>
+        <p>Спочатку — тема й аналіз. Лише потім пошук мови, що найточніше передасть зміст. Назва роботи є частиною композиції: вона не пояснює, а задає напрямок прочитання.</p>
+      </div>
+      <div class="card reveal" style="--d:.12s">
+        <span class="num">ii.</span>
+        <h3>Сатира й парадокс</h3>
+        <p>Роботи часто мають сатиричний підтекст, іноді — прямі, навіть цинічні висловлювання про проблеми й парадокси, що стосуються кожного: війна, цінності, пам'ять, віра.</p>
+      </div>
+      <div class="card reveal" style="--d:.24s">
+        <span class="num">iii.</span>
+        <h3>Без одного стилю</h3>
+        <p>Від класичного полотна й олії до пастелі, крові на папері, механічних пристроїв та колективного перформансу. Роботи об'єднані методом мислення, а не манерою.</p>
+      </div>
+    </div>
+    <div class="marquee" aria-hidden="true"><div class="mq"></div><div class="mq"></div></div>
+  </section>
+
+  <section id="top">
+    <div class="card car-head reveal">
+      <div><div class="eyebrow">Selected works</div><h2 class="h2">Топ <em>робіт</em></h2></div>
+      <div class="car-nav" data-for="topTrack">
+        <div class="car-prog"><i></i></div>
+        <button data-dir="-1" aria-label="Назад"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 2L4 8l6 6"/></svg></button>
+        <button data-dir="1" aria-label="Вперед"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 2l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <div class="track" id="topTrack"></div>
+  </section>
+
+  <section id="sales">
+    <div class="card car-head reveal">
+      <div><div class="eyebrow">Special offer</div><h2 class="h2">Sales</h2></div>
+      <div class="car-nav" data-for="saleTrack">
+        <div class="car-prog"><i></i></div>
+        <button data-dir="-1" aria-label="Назад"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 2L4 8l6 6"/></svg></button>
+        <button data-dir="1" aria-label="Вперед"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 2l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <div class="track" id="saleTrack"></div>
+  </section>
+
+  <section id="collections">
+    <div class="card sec-head reveal">
+      <div><div class="eyebrow">Series &amp; collections</div><h2 class="h2">Колекції</h2></div>
+      <p class="lead" style="max-width:440px">Художник працює серіями. Кожна — окреме дослідження зі своїм питанням і своєю мовою.</p>
+    </div>
+    <div class="coll-grid" id="collGrid"></div>
+  </section>
+
+  <section id="catalogue">
+    <div class="card reveal">
+      <div class="sec-head">
+        <div><div class="eyebrow">Catalogue</div><h2 class="h2">Усі <em>роботи</em></h2></div>
+        <p class="lead" style="max-width:440px">Оригінали з підписом автора та сертифікатом автентичності.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="cat-grid" id="catGrid"></div>
+  </section>
+
+  <section id="cv">
+    <div class="cv">
+      <div class="card reveal">
+        <div class="eyebrow" style="margin-bottom:18px">CV</div>
+        <h2 class="h2">Виставки <em>та&nbsp;проєкти</em></h2>
+      </div>
+      <div class="card reveal" style="--d:.12s">
+        <ul class="tl">
+          <li><time>2026</time><div><b>Серії «Душа», «Lifeline», «Примітивний експресіонізм»</b><span>Нові роботи, що увійшли до цього каталогу</span></div></li>
+          <li><time>29.10.2023</time><div><b>«Розп'яті на бордюрах»</b><span>Проєкт у міському просторі · м. Конотоп</span></div></li>
+          <li><time>21.09.2023</time><div><b>«With Love Smirnovich»</b><span>Персональна виставка · м. Львів, Intellias Art Point</span></div></li>
+          <li><time>2021</time><div><b>Початок творчого шляху</b><span>Перші роботи серії «Смислографія» та «Душа»</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="buy">
+    <div class="buy">
+      <div class="card reveal">
+        <div class="eyebrow" style="margin-bottom:18px">Collect</div>
+        <h2 class="h2">Як придбати <em>роботу</em></h2>
+        <ol class="steps">
+          <li><div><b>Запит</b><span>Оберіть роботу й надішліть запит — ми надішлемо додаткові фото та відео.</span></div></li>
+          <li><div><b>Особиста презентація</b><span>Перегляд у майстерні або онлайн-дзвінок з автором: історія та ідея твору.</span></div></li>
+          <li><div><b>Сертифікат автентичності</b><span>Кожен оригінал має підпис автора та іменний сертифікат.</span></div></li>
+          <li><div><b>Доставка</b><span>Музейне пакування, страхування, доставка по Україні та за кордон.</span></div></li>
+        </ol>
+      </div>
+      <div class="card cta reveal" style="--d:.12s">
+        <div>
+          <div class="eyebrow" style="margin-bottom:18px">Contact</div>
+          <h2 class="h2">Поговоримо <em>про&nbsp;мистецтво</em></h2>
+          <p style="margin-top:20px">Питання щодо роботи, індивідуальне замовлення або візит до майстерні — напишіть, і автор відповість особисто.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <button class="btn" data-contact="">Зв'язатися <svg viewBox="0 0 14 14" fill="none" stroke="currentColor"><path d="M1 7h12M8 2l5 5-5 5"/></svg></button>
+            <a class="btn line" data-pf target="_blank" rel="noopener">Портфоліо ↗</a>
+          </div>
+          <div class="contacts">
+            <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+            <span>hello@smirnovch.art</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="big-name">Smirnovich</div>
+  <div class="card">
+    <span class="logo">SMIRNOVICH</span>
+    <span>© 2026 Smirnovich. Усі права на зображення належать автору.<br>Музика: Ф. Шопен, ноктюрни у виконанні Frank Levy, Xuan He, Olga Gurevich (Musopen, public domain).</span>
+    <a href="#author">Нагору ↑</a>
+  </div>
+</footer>
+
+<dialog id="workDlg">
+  <div class="pop wv">
+    <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    <div class="stage">
+      <img id="wvImg" alt="">
+      <div class="arrows">
+        <button id="prev" aria-label="Попередня"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 2L4 8l6 6"/></svg></button>
+        <button id="next" aria-label="Наступна"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 2l6 6-6 6"/></svg></button>
+      </div>
+      <span class="counter" id="wvCount"></span>
+    </div>
+    <div class="info" id="wvInfo"></div>
+  </div>
+</dialog>
+
+<dialog id="collDlg">
+  <div class="pop cv-dlg">
+    <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    <header>
+      <div><div class="eyebrow" id="cdCount"></div><h2 id="cdTitle"></h2></div>
+      <p class="lead" id="cdText"></p>
+    </header>
+    <div class="grid" id="cdGrid"></div>
+  </div>
+</dialog>
+
+<dialog id="contactDlg">
+  <div class="pop contact-dlg">
+    <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    <div class="side">
+      <div>
+        <div class="eyebrow" style="margin-bottom:18px;color:#9d9c98">Contact</div>
+        <h2 class="h2">Зв'язатися <em>з автором</em></h2>
+        <p style="margin-top:20px">Відповідаємо протягом доби. Можна запитати про роботу, домовитися про перегляд або замовити картину під ваш інтер'єр.</p>
+      </div>
+      <div class="contacts">
+        <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+        <span>hello@smirnovch.art</span>
+      </div>
+    </div>
+    <div class="main">
+      <div class="eyebrow">Запит</div>
+      <div class="chosen" id="chosen" hidden><img id="chImg" alt=""><div><b id="chTitle"></b><span id="chSub"></span></div></div>
+      <form id="form">
+        <label for="fName">Ім'я<input id="fName" name="name" required autocomplete="name"></label>
+        <label for="fContact">Телефон або e-mail<input id="fContact" name="contact" required></label>
+        <label for="workSelect">Робота<select id="workSelect" name="work"></select></label>
+        <label for="fMsg">Повідомлення<textarea id="fMsg" name="msg" placeholder="Розмір, інтер'єр, питання до автора…"></textarea></label>
+        <button class="btn dark" type="submit" style="align-self:flex-start">Надіслати запит <svg viewBox="0 0 14 14" fill="none" stroke="currentColor"><path d="M1 7h12M8 2l5 5-5 5"/></svg></button>
+        <div class="ok" id="ok" hidden>Дякуємо! Автор зв'яжеться з вами найближчим часом.</div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<button class="music" id="music" aria-label="Увімкнути музику">
+  <span class="ic">
+    <svg class="off" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v4h3l4 3.5v-11L6 8z" fill="currentColor"/><path d="M13.5 7.5l4 5M17.5 7.5l-4 5"/></svg>
+    <svg class="on" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v4h3l4 3.5v-11L6 8z" fill="currentColor"/><path d="M13 7.5a3.5 3.5 0 010 5M15.5 5a7 7 0 010 10"/></svg>
+  </span>
+  <span class="txt"><span id="musicState">Музика вимкнена</span><b id="musicTitle">Chopin · Nocturnes</b></span>
+  <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+</button>
+<button class="admin-fab" id="adminFab" hidden><i></i>Адмінка</button>
+<dialog id="adminDlg">
+  <div class="pop adm">
+    <button class="x" data-close aria-label="Закрити"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    <div class="adm-bar">
+      <h2>Адмінпанель</h2>
+      <div class="tabs" id="admTabs">
+        <button data-tab="works" class="on">Роботи</button>
+        <button data-tab="top">Топ робіт</button>
+        <button data-tab="sales">Sales</button>
+      </div>
+    </div>
+    <div class="adm-body" id="admBody"></div>
+    <div class="adm-foot">
+      <span class="adm-status" id="admStatus">Змін немає.</span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn sm" id="admReset" disabled>Скасувати зміни</button>
+        <button class="btn dark sm" id="admSave" disabled>Опублікувати на сайті</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+</template>
+
+<script type="application/json" id="site-data">{"works":[{"id":"chaos","s":"mixtape","t":"Перетворювач хаосу","m":"Холст, олія","z":"50×50 см","y":2026,"p":1400,"d":"Клубок хаотичних ліній ліворуч проходить крізь невидимий механізм і виходить праворуч рівними паралельними смугами. Робота про людину як фільтр: ми щодня приймаємо безлад світу і повертаємо йому порядок — або вдаємо, що повертаємо.","img":"images/chaos.jpg"},{"id":"touch","s":"mixtape","t":"THE TOUCH","m":"Холст, олія","z":"40×30 см","y":2021,"p":1100,"d":"Цитата на «Створення Адама» Мікеланджело, де дотик божественного й людського закінчується вибухом. Іронічне питання про те, що відбувається, коли творець і творіння нарешті зустрічаються.","img":"images/touch.jpg"},{"id":"dusha-2","s":"dusha","t":"Душа 2","m":"Холст, олійні фарби","z":"50×50 см","y":2026,"p":1300,"d":"Самотня світла постать посеред глибокої темряви. Найбільша робота серії: майже порожнє полотно, у якому душа — ледь помітне, але єдине джерело світла.","img":"images/dusha-2.jpg"},{"id":"lifeline-2","s":"lifeline","t":"Без назви","m":"Холст, олія","z":"200×100 см","y":2026,"p":4800,"d":"Монументальна горизонталь серії Lifeline. Життя, розгорнуте як веселка: смуги кольору — етапи, а лінія, що проходить крізь них, — шлях однієї людини від народження до тиші.","img":"images/lifeline-2.jpg"},{"id":"hiroshima","s":"primitive","t":"Hiroshima","m":"Холст, олія","z":"40×40 см","y":2026,"p":1200,"d":"Фіолетові дерева, схожі на вибухи, і вогняна смуга обрію. Пейзаж, у якому краса й катастрофа написані одним і тим самим мазком.","img":"images/hiroshima.jpg"},{"id":"conceptualist","s":"mixtape","t":"Концептуаліст, що втратив сенс","m":"Холст, олія","z":"80×60 см","y":2023,"p":2600,"st":"r","d":"Художник сидить між двома порожніми полотнами й дивиться у вікно. Автопортрет кризи: момент, коли метод «від ідеї до форми» зупиняється, бо ідеї немає. Можливо, найчесніша робота мікстейпу.","img":"images/conceptualist.jpg"},{"id":"robot","s":"mixtape","t":"Робот, який робить ляльок за власною подобою та поклоняється людині, бо та його створила","m":"Диптих, холст, олія","z":"80×60 та 50×60 см","y":2021,"p":4200,"d":"Диптих про ланцюг творення. Робот майструє дерев'яну ляльку, над ним — ікона з людським обличчям. На другій частині: «You will PRAY to ME!». Сатира на ієрархії творця й творіння, віру та владу.","img":"images/robot.jpg"},{"id":"dusha-1","s":"dusha","t":"Душа 1","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":700,"d":"Темна постать на тлі стіни з вікнами, у червоній рамі полотна. Душа, що стоїть на порозі власного дому — і не впевнена, чи хоче увійти.","img":"images/dusha-1.jpg"},{"id":"dusha-3","s":"dusha","t":"Душа 3","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":700,"st":"s","d":"Чорна фігура з червоним серцем на тлі зигзагоподібного орнаменту. Ритм навколо — як шум світу, крізь який душа зберігає своє тепло.","img":"images/dusha-3.jpg"},{"id":"dusha-4","s":"dusha","t":"Дві душі, що прямують до раю","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":800,"d":"Дві маленькі постаті йдуть назустріч смугастому заходу сонця. Найніжніша робота серії — про те, що навіть дорога до раю легша, коли йдеш не сам.","img":"images/dusha-4.jpg"},{"id":"dusha-5","s":"dusha","t":"Душа 4","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":700,"sale":590,"d":"Блакитний силует, у центрі якого спалахує зірка. Момент осяяння, коли внутрішнє світло стає видимим ззовні.","img":"images/dusha-5.jpg"},{"id":"dusha-6","s":"dusha","t":"Бездушна оболонка","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":650,"st":"s","d":"Світла, майже примарна фігура з порожнім поглядом. Антипод серії — що лишається від людини, коли душа її залишила.","img":"images/dusha-6.jpg"},{"id":"dusha-7","s":"dusha","t":"Душа 5","m":"Холст, олійні фарби","z":"30×30 см","y":2026,"p":700,"d":"Згорнута фігура в темному колі, оточена синім і червоним. Душа в стані захисту — у коконі, який водночас оберігає й ув'язнює.","img":"images/dusha-7.jpg"},{"id":"dusha-8","s":"dusha","t":"Душа","m":"Холст, олійні фарби","z":"30×30 см","y":2021,"p":900,"d":"Перша робота, з якої почалася серія. Червона постать, що світиться біля сходів, — образ душі, яка піднімається, ще не знаючи куди.","img":"images/dusha-8.jpg"},{"id":"lifeline-1","s":"lifeline","t":"Без назви","m":"Холст, олія","z":"150×150 см","y":2026,"p":3900,"d":"Спіраль, що закручується до центру. Одне життя, стиснуте в коло: кожен виток — повернення до тих самих питань на новому рівні.","img":"images/lifeline-1.jpg"},{"id":"lifeline-3","s":"lifeline","t":"Без назви","m":"Папір, пастель","z":"21×21 см","y":2026,"p":350,"sale":280,"d":"Камерна робота на папері: чорні жести й кольорові сліди, як записи пам'яті. Життя як чернетка, яку неможливо переписати.","img":"images/lifeline-3.jpg"},{"id":"lifeline-4","s":"lifeline","t":"Лабіринт","m":"Холст, олія","z":"—","y":2026,"p":600,"d":"Чорно-біла лінія, що петляє квадратним лабіринтом. Етюд до серії: шлях, який здається заплутаним зсередини і простим, якщо подивитися згори.","img":"images/lifeline-4.jpg"},{"id":"abstract-100","s":"abstract","t":"Без назви","m":"Холст, олія","z":"100×100 см","y":2026,"p":3200,"d":"Головне полотно серії. Щільне плетиво червоного, синього й охри, у якому кожен глядач бачить своє. Робота, що найкраще передає момент народження гармонії з хаосу.","img":"images/abstract-100.jpg"},{"id":"khlopushka","s":"abstract","t":"Новорічна хлопушка в коловороті лайна","m":"Холст, олія","z":"40×40 см","y":2025,"p":950,"d":"Вихор теплих темних мазків, крізь який пробиваються яскраві конфеті. Свято посеред буденності — з тією самою іронією, що й у назві.","img":"images/khlopushka.jpg"},{"id":"firmova","s":"abstract","t":"Фірмова доставка","m":"Холст, олія","z":"30×30 см","y":2025,"p":700,"sale":560,"d":"Синьо-жовта рельєфна поверхня з густими краплями фарби. Енергійна, майже скульптурна робота — фактура, яку хочеться торкнутися.","img":"images/firmova.jpg"},{"id":"newhope","s":"abstract","t":"New Hope","m":"Холст, олія","z":"30×30 см","y":2025,"p":650,"sale":520,"d":"Яскраві мазки на сонячно-жовтому тлі. Найоптимістичніша робота серії — заряд кольору для простору, якому бракує світла.","img":"images/newhope.jpg"},{"id":"newyeartree","s":"abstract","t":"New Year Tree","m":"Холст, олія","z":"30×30 см","y":2025,"p":650,"d":"Червоні спіралі на густому зеленому — ялинка, що розчинилася в абстракції. Святковий настрій без жодної прямої цитати.","img":"images/newyeartree.jpg"},{"id":"sky","s":"abstract","t":"Sky Through The Crown Of Tree","m":"Холст, пастель","z":"30×30 см","y":2025,"p":500,"sale":390,"d":"Небо, яке бачиш, лежачи під деревом: синь, що пробивається крізь листя. Легка, повітряна робота.","img":"images/sky.jpg"},{"id":"pizza","s":"abstract","t":"Піца зі спаржею","m":"Холст, олія","z":"30×30 см (тондо)","y":2025,"p":750,"d":"Кругле полотно з рельєфними завитками фарби. Гастрономічна назва перетворює абстракцію на жарт — і змушує дивитися уважніше.","img":"images/pizza.jpg"},{"id":"indigo","s":"abstract","t":"Indigo","m":"Холст, олія","z":"30×40 см","y":2025,"p":600,"sale":480,"d":"Темне, глибоке полотно з червоними й бірюзовими спалахами. Нічна робота для тих, хто любить споглядати повільно.","img":"images/indigo.jpg"},{"id":"sadside","s":"abstract","t":"Sad Side Of Heaven","m":"Холст, олія","z":"40×30 см","y":2025,"p":600,"d":"Синьо-жовті мазки в білій рамі полотна. Рай, побачений з того боку, де трохи сумно.","img":"images/sadside.jpg"},{"id":"allusion","s":"mixtape","t":"Алюзія на життя в Україні","m":"Холст, олія","z":"40×50 см","y":2024,"p":1000,"d":"М'ясорубка на чорному тлі. Жорстка й лаконічна метафора: механізм, крізь який проходить кожен. Без коментарів — назва говорить сама.","img":"images/allusion.jpg"},{"id":"pravovyi","s":"mixtape","t":"Правовий режим воєнного часу","m":"Резолюція прав людини на туалетному папері","z":"—","y":2024,"p":1500,"d":"Загальна декларація прав людини, надрукована на туалетному папері. Концептуальний об'єкт про ціну декларацій, коли реальність говорить інакше.","img":"images/pravovyi.jpg"},{"id":"duel","s":"mixtape","t":"Дуель з собою","m":"Холст, олія","z":"40×30 см","y":2021,"p":1100,"d":"Дві постаті з револьверами на пагорбі під грозовим небом — і обидві є однією людиною. Внутрішній конфлікт, перенесений у жанр вестерну.","img":"images/duel.jpg"},{"id":"equilibrium","s":"mixtape","t":"Еквілібризм по-українськи","m":"Холст, олія","z":"40×30 см","y":2021,"p":1200,"d":"Будівля парламенту з дахом-шапіто. Політична сатира: держава як цирк, у якому всі балансують, але ніхто не падає.","img":"images/equilibrium.jpg"},{"id":"war","s":"mixtape","t":"Війна в Україні триває","m":"Акварельний папір, кров","z":"30×20 см","y":2021,"p":900,"d":"Фігура на дивані перед телевізором, написана кров'ю. Дзеркальний напис «War on Ukraine keep going» — звична новина, до якої світ встиг звикнути.","img":"images/war.jpg"},{"id":"tulipberry","s":"mixtape","t":"Tulipberry","m":"Холст, олія","z":"30×40 см","y":2021,"p":800,"sale":640,"d":"Тюльпани, що виросли полуницями. Сюрреалістичний натюрморт про очікування та підміну — і просто дуже гарна річ.","img":"images/tulipberry.jpg"},{"id":"vnuk","s":"mixtape","t":"Внук людський","m":"Холст, олія","z":"40×50 см","y":2021,"p":1000,"d":"Безликий чоловік у білій сорочці — пряма алюзія на «Сина людського» Магрітта. Нове покоління, яке втратило навіть яблуко, що приховувало обличчя.","img":"images/vnuk.jpg"},{"id":"euthanasia","s":"mixtape","t":"Свята евтаназія","m":"Холст, олія","z":"30×40 см","y":2021,"p":900,"st":"s","d":"Силует смерті з косою, вирізаний із нічного неба, крізь який видно хмари. Смерть як вихід у світло — провокативна робота про право вибору.","img":"images/euthanasia.jpg"},{"id":"lugar","s":"primitive","t":"Lugar","m":"Холст, олія","z":"30×30 см","y":2026,"p":550,"sale":440,"d":"Сіро-фіолетове небо над смугою зелені. Мінімальна форма місця — пейзаж, зведений до відчуття.","img":"images/lugar.jpg"},{"id":"starry","s":"primitive","t":"Starry Night","m":"Холст, олія","z":"30×20 см","y":2026,"p":600,"d":"Діалог з Ван Гогом: густе нічне небо, вогняне сонце-місяць і жовті зорі над землею. Класичний сюжет, переказаний мовою примітиву.","img":"images/starry.jpg"},{"id":"starychi1","s":"primitive","t":"Старичі","m":"Папір, пастель","z":"18×18 см","y":2025,"p":300,"sale":240,"d":"Темний ліс і квітучий луг. Пастельний етюд з натури — тепла, тиха робота.","img":"images/starychi1.jpg"},{"id":"starychi2","s":"primitive","t":"Старичі II","m":"Папір, пастель","z":"18×18 см","y":2025,"p":300,"d":"Дорога вздовж жовтого поля до зеленої смуги лісу. Пара до першої роботи — гарно звучать разом.","img":"images/starychi2.jpg"},{"id":"clouds","s":"primitive","t":"Без назви","m":"Холст, олія","z":"30×30 см","y":2026,"p":600,"d":"Рельєфні хмари, що висять над сірою рівниною. Густа, майже скульптурна фактура олії.","img":"images/clouds.jpg"},{"id":"tree","s":"primitive","t":"Без назви","m":"Холст, олія","z":"30×30 см","y":2026,"p":600,"d":"Темне дерево і гілка рельєфного білого цвіту. Весна, яка приходить навіть уночі.","img":"images/tree.jpg"},{"id":"oldtown","s":"primitive","t":"Old Town","m":"Папір, пастель","z":"21×21 см","y":2026,"p":350,"sale":280,"d":"Старе місто з дзвіницею під важким небом, в насиченій червоній рамі. Спогад про місце, а не його портрет.","img":"images/oldtown.jpg"},{"id":"field","s":"primitive","t":"Без назви","m":"Папір, пастель","z":"18×18 см","y":2026,"p":300,"d":"Синє небо, що густішає до ночі, і маленьке село на обрії. Пастель із відчуттям тиші перед світанком.","img":"images/field.jpg"},{"id":"katyusha","s":"primitive","t":"Катюша в ромашковому полі","m":"Холст, олія","z":"40×30 см","y":2025,"p":850,"d":"Реактивна установка серед ромашкового поля. Спокійний пейзаж, у якому війна стала частиною ландшафту.","img":"images/katyusha.jpg"}],"top":["chaos","touch","dusha-2","lifeline-2","hiroshima","conceptualist","robot","abstract-100"],"sales":["dusha-5","lifeline-3","firmova","newhope","sky","indigo","tulipberry","lugar","starychi1","oldtown"]}</script>
+
+<script id="app-js">
+document.documentElement.classList.add('js');
+const tpl=document.getElementById('tpl');
+document.getElementById('site-data').before(tpl.content.cloneNode(true));
+const $=id=>document.getElementById(id);
+const PORTFOLIO='https://docs.google.com/document/d/1w8I76iI_sgNLGHuA6D7OnKSFjOgaO4b0b3gjUC1-Cbk/edit?usp=sharing';
+document.querySelectorAll('[data-pf]').forEach(a=>a.href=PORTFOLIO);
+
+const SERIES={
+  dusha:{t:'Душа',text:'Інтроспективне дослідження людської душі. Душу не можна розглянути під мікроскопом чи зважити — єдиним інструментом її пізнання залишається сама людина. Автор тут одночасно дослідник і інструмент: через інтуїцію та живопис він вимірює, систематизує і створює суб\'єктивні образи людських душ.'},
+  lifeline:{t:'Lifeline',text:'Одна лінія — одне життя. Абстрактний експресіонізм, що зводить людську історію до мінімальної форми. В основі робіт — історії реальних людей: одні були джерелом натхнення, інші брали участь у створенні своїх картин. Початок, кульмінація і завершення існують одночасно.'},
+  abstract:{t:'Абстрактний експресіонізм',text:'Рух навпаки — від форми до ідеї. Першими з\'являються колір, жест, ритм. Назва народжується після завершення твору. Як тест Роршаха, абстракція дає глядачеві побачити не лише картину, а й самого себе. Спроба працювати з хаосом і зловити момент, коли з нього народжується гармонія.'},
+  mixtape:{t:'Mixtape 1 · Смислографія',text:'Збірка концептуальних творів, створених у різний час. Їх об\'єднує не сюжет і не стилістика, а метод: від ідеї до форми. Кожна робота — окреме філософське дослідження, а назва — невід\'ємна частина композиції. Перший «мікстейп» ідей автора.'},
+  primitive:{t:'Примітивний експресіонізм',text:'Авторський напрям, що виріс із тяжіння до простоти форми. Скільки форми необхідно, щоб передати складний емоційний зміст? Експресія без зайвого — переосмислення традиції експресіонізму через свідоме спрощення.'}
+};
+const COLL_ORDER=Object.keys(SERIES);
+
+// Site state lives in the JSON block above; the admin panel edits a copy and republishes the page with it.
+const SITE=JSON.parse($('site-data').textContent);
+let W=[],byId={},TOP=[],SALES=[],isAdmin=false;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST={s:'Продано',r:'Резерв'};
+const $$=n=>'$'+Number(n).toLocaleString('uk-UA');
+const onSale=w=>SALES.includes(w.id)&&w.sale>0&&w.sale<w.p&&w.st!=='s';
+const off=w=>Math.round((1-w.sale/w.p)*100);
+const cur=w=>onSale(w)?w.sale:w.p;
+const priceHtml=w=>w.st==='s'?'<span class="pr sold">Продано</span>'
+  :onSale(w)?`<span class="pr sale"><s>${$$(w.p)}</s>${$$(w.sale)}</span>`:w.p?`<span class="pr">${$$(w.p)}</span>`:'<span class="pr">За запитом</span>';
+const badge=w=>w.st?`<span class="badge${w.st==='s'?' sold':''}">${ST[w.st]}</span>`:onSale(w)?`<span class="badge sale">−${off(w)}%</span>`:'';
+const stHtml=w=>`<span class="st${{s:' sold',r:' res'}[w.st]||''}">${ST[w.st]||'Доступна'}</span>`;
+const sub=w=>[w.m,w.z,w.y].filter(Boolean).map(esc).join(' · ');
+const workCard=w=>`<article class="card work" data-id="${esc(w.id)}">${badge(w)}
+  <div class="img"><img src="${esc(w.img)}" alt="${esc(w.t)}" loading="lazy"></div>
+  <div class="meta"><h4>${esc(w.t)}</h4><span class="sub">${sub(w)}</span>
+  <div class="row">${priceHtml(w)}${stHtml(w)}</div></div></article>`;
+const slide=(w,i)=>`<article class="card slide" data-id="${esc(w.id)}">${badge(w)}
+  <div class="img"><img src="${esc(w.img)}" alt="${esc(w.t)}" loading="lazy"></div>
+  <div class="meta"><h3>${esc(w.t)}</h3><div class="sub">${[SERIES[w.s]?.t,w.z,w.y].filter(Boolean).map(esc).join(' · ')}</div>
+  <div class="foot">${priceHtml(w)}<span class="rank">${String(i+1).padStart(2,'0')}</span></div></div></article>`;
+
+let filter='all';
+function render(data){
+  W=data.works; byId=Object.fromEntries(W.map(w=>[w.id,w]));
+  TOP=data.top.filter(id=>byId[id]); SALES=data.sales.filter(id=>byId[id]);
+  $('topTrack').innerHTML=TOP.map((id,i)=>slide(byId[id],i)).join('')||'<p class="empty">Тут з’являться вибрані роботи.</p>';
+  const sales=SALES.map(id=>byId[id]).filter(onSale);
+  $('saleTrack').innerHTML=sales.map(slide).join('')||'<p class="empty">Зараз немає робіт зі знижкою.</p>';
+  $('sales').hidden=!sales.length&&!isAdmin;
+  $('collGrid').innerHTML=COLL_ORDER.map((k,i)=>{const ws=W.filter(w=>w.s===k);if(!ws.length)return'';
+    const from=Math.min(...ws.filter(w=>w.st!=='s'&&cur(w)).map(cur));
+    return `<article class="card coll" data-coll="${k}">
+    <div class="covers">${ws.slice(0,3).map(w=>`<div><img src="${esc(w.img)}" alt="" loading="lazy"></div>`).join('')}</div>
+    <div class="body"><span class="count">${ws.length} робіт${isFinite(from)?' · від '+$$(from):''}</span><h3>${esc(SERIES[k].t)}</h3><p>${esc(SERIES[k].text.split('. ').slice(0,2).join('. '))}.</p>
+    <span class="more"><i></i>Відкрити колекцію</span></div></article>`}).join('')+
+    `<a class="card coll portfolio" href="${PORTFOLIO}" target="_blank" rel="noopener">
+      <div class="eyebrow" style="color:#9d9c98">Portfolio</div>
+      <div><div class="big">Портфоліо</div><p style="margin-top:16px">Повне портфоліо автора в оригінальному вигляді: bio, CV, проєкти, серії та нові роботи. Відкривається в новій вкладці.</p></div>
+      <span class="more"><i></i>Відкрити портфоліо ↗</span></a>`;
+  $('catGrid').innerHTML=W.map(workCard).join('');
+  $('filters').innerHTML=`<button data-f="all">Усі<sup>${W.length}</sup></button>`+
+    COLL_ORDER.map(k=>`<button data-f="${k}">${esc(SERIES[k].t.split(' · ')[0])}<sup>${W.filter(w=>w.s===k).length}</sup></button>`).join('')+
+    `<button data-f="sale">Sales<sup>${sales.length}</sup></button><button data-f="avail">Доступні<sup>${W.filter(w=>!w.st).length}</sup></button>`;
+  applyFilter(filter);
+  $('workSelect').innerHTML='<option value="">Загальне питання / замовлення</option>'+W.filter(w=>w.st!=='s').map(w=>`<option value="${esc(w.id)}">${esc(w.t)}${w.z?' — '+esc(w.z):''}</option>`).join('');
+  $('countWorks').textContent=W.length+'+';
+  document.querySelectorAll('.car-nav').forEach(n=>n._upd&&n._upd());
+}
+function applyFilter(f){
+  filter=f;
+  $('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.f===f));
+  $('catGrid').querySelectorAll('.work').forEach(el=>{const w=byId[el.dataset.id];
+    el.classList.toggle('hide',!(f==='all'||(f==='avail'?!w.st:f==='sale'?onSale(w):w.s===f)))});
+}
+$('filters').onclick=e=>{const b=e.target.closest('button');if(b)applyFilter(b.dataset.f)};
+
+// carousels
+document.querySelectorAll('.car-nav').forEach(nav=>{
+  const tr=$(nav.dataset.for), bar=nav.querySelector('i');
+  const stepW=()=>(tr.firstElementChild?.offsetWidth||300)+parseFloat(getComputedStyle(tr).columnGap||0);
+  const go=d=>{const end=tr.scrollLeft+tr.clientWidth>=tr.scrollWidth-4;
+    tr.scrollTo({left:d>0&&end?0:tr.scrollLeft+d*stepW()})};
+  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.dir));
+  nav._upd=()=>{const vis=Math.min(1,tr.clientWidth/(tr.scrollWidth||1)), max=tr.scrollWidth-tr.clientWidth;
+    bar.style.width=vis*100+'%'; bar.style.transform=`translateX(${max>0?tr.scrollLeft/max*(1/vis-1)*100:0}%)`};
+  tr.addEventListener('scroll',nav._upd,{passive:true}); addEventListener('resize',nav._upd);
+  let hover=false; tr.onmouseenter=()=>hover=true; tr.onmouseleave=()=>hover=false;
+  setInterval(()=>{if(!hover&&!document.querySelector('dialog[open]'))go(1)},5000);
+});
+document.querySelectorAll('.mq').forEach(m=>m.innerHTML=COLL_ORDER.map(k=>`<span>${esc(SERIES[k].t)}</span>`).join('')+'<span>Оригінали</span><span>Смислографія</span>');
+
+// popups
+const openDlg=d=>{document.querySelectorAll('dialog[open]').forEach(x=>x!==d&&x.close());if(!d.open)d.showModal()};
+let list=[], idx=0;
+function openWork(id,ctx){
+  list=ctx&&ctx.includes(id)?ctx:W.map(w=>w.id); idx=list.indexOf(id);
+  const w=byId[id];
+  const img=$('wvImg'); img.src=w.img; img.alt=w.t; img.style.animation='none'; img.offsetWidth; img.style.animation='';
+  $('wvInfo').innerHTML=`<div class="eyebrow">Колекція · ${esc(SERIES[w.s]?.t||'')}</div>
+    <h2>${esc(w.t)}</h2><p class="desc">${esc(w.d)}</p>
+    <dl class="spec">${[['Техніка',w.m],['Розмір',w.z],['Рік',w.y],['Автор','Smirnovich']].map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b||'—')}</dd></div>`).join('')}</dl>
+    <div class="price">${priceHtml(w)}${onSale(w)&&!w.st?`<span class="badge sale" style="position:static">−${off(w)}%</span>`:stHtml(w)}</div>
+    <div class="actions"><button class="btn dark" data-contact="${w.st==='s'?'':esc(w.id)}">${w.st==='s'?'Замовити подібну':'Придбати / запитати'}</button><button class="btn" data-coll="${esc(w.s)}">Уся колекція</button></div>
+    <p class="note">Оригінал · підпис автора · сертифікат автентичності</p>`;
+  $('wvCount').textContent=`${idx+1} / ${list.length}`;
+  openDlg($('workDlg'));
+}
+const step=d=>openWork(list[(idx+d+list.length)%list.length],list);
+$('prev').onclick=()=>step(-1); $('next').onclick=()=>step(1);
+function openColl(k){
+  const ws=W.filter(w=>w.s===k);
+  $('cdTitle').textContent=SERIES[k].t; $('cdText').textContent=SERIES[k].text; $('cdCount').textContent=`Колекція · ${ws.length} робіт`;
+  $('cdGrid').innerHTML=ws.map(workCard).join(''); $('cdGrid').dataset.ctx=ws.map(w=>w.id).join(',');
+  openDlg($('collDlg')); $('collDlg').querySelector('.cv-dlg').scrollTop=0;
+}
+function openContact(id){
+  const w=byId[id]; $('workSelect').value=w?id:'';
+  $('chosen').hidden=!w;
+  if(w){$('chImg').src=w.img;$('chTitle').textContent=w.t;$('chSub').textContent=[w.z,w.st==='s'?'':(cur(w)?$$(cur(w)):'')].filter(Boolean).join(' · ')}
+  $('ok').hidden=true; openDlg($('contactDlg'));
+}
+$('workSelect').onchange=()=>openContact($('workSelect').value);
+$('burger').onclick=()=>$('menu').classList.toggle('open');
+
+document.addEventListener('click',e=>{
+  const t=e.target;
+  if(t.closest('[data-close]'))return t.closest('dialog').close();
+  if(t.tagName==='DIALOG')return t.close();
+  if(t.closest('#menu a'))$('menu').classList.remove('open');
+  if(t.closest('#adminDlg'))return;
+  const c=t.closest('[data-contact]'); if(c)return later(()=>openContact(c.dataset.contact));
+  const k=t.closest('[data-coll]'); if(k)return later(()=>openColl(k.dataset.coll));
+  const card=t.closest('[data-id]');
+  if(card){const g=card.closest('#cdGrid,#topTrack,#saleTrack,#catGrid');
+    const ctx=g.id==='cdGrid'?g.dataset.ctx.split(','):g.id==='topTrack'?TOP:g.id==='saleTrack'?SALES.filter(id=>onSale(byId[id])):[...$('catGrid').querySelectorAll('.work:not(.hide)')].map(x=>x.dataset.id);
+    later(()=>openWork(card.dataset.id,ctx))}
+});
+// Paint splat on every press; popups open a beat later so the splat is seen first.
+const PAINT=['#a8473a','#c9a24a','#2f4a7a','#151515','#5c7a52','#7a3b5c','#d07a3a'];
+// Wet brush slapping canvas, synthesized (no audio file). Silent when the visitor muted the sound.
+let actx=null;
+function slap(){
+  if(muted)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+    const t=actx.currentTime+.005, sr=actx.sampleRate;
+    const master=actx.createGain(); master.gain.value=.16; master.connect(actx.destination);
+    // soft damp dab: brown noise through a low-pass, gentle attack
+    const len=.22, b=actx.createBuffer(1,sr*len|0,sr), d=b.getChannelData(0);
+    let last=0; for(let i=0;i<d.length;i++){last=(last+.04*(Math.random()*2-1))/1.04;d[i]=last*3.5}
+    const src=actx.createBufferSource(); src.buffer=b;
+    const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=800+Math.random()*500; lp.Q.value=.3;
+    const g=actx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(1,t+.018); g.gain.setTargetAtTime(0,t+.03,.045);
+    src.connect(lp).connect(g).connect(master); src.start(t); src.stop(t+len);
+    // faint low tap of stretched canvas
+    const o=actx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(115,t); o.frequency.exponentialRampToValueAtTime(70,t+.07);
+    const og=actx.createGain(); og.gain.setValueAtTime(0,t); og.gain.linearRampToValueAtTime(.45,t+.006); og.gain.setTargetAtTime(0,t+.012,.025);
+    o.connect(og).connect(master); o.start(t); o.stop(t+.15);
+  }catch(e){}
+}
+const later=fn=>setTimeout(fn,260);
+function splatPath(){
+  const n=18,pts=[];
+  for(let i=0;i<n;i++){const a=i/n*Math.PI*2,r=(i%4===0?27:19)*(.8+Math.random()*.4);pts.push([42+Math.cos(a)*r,42+Math.sin(a)*r])}
+  const mid=(p,q)=>((p[0]+q[0])/2).toFixed(1)+' '+((p[1]+q[1])/2).toFixed(1);
+  const d='M'+mid(pts[n-1],pts[0])+pts.map((p,i)=>' Q'+p[0].toFixed(1)+' '+p[1].toFixed(1)+' '+mid(p,pts[(i+1)%n])).join('')+'Z';
+  return '<path d="'+d+'"/><ellipse cx="36" cy="35" rx="7" ry="4" fill="#fff" opacity=".28" transform="rotate(-30 36 35)"/>';
+}
+// Droplets fly out along arcs (gravity), stretched along their path, then settle as dots.
+function droplets(wrap){
+  const n=12+Math.random()*9|0, G=560;
+  for(let i=0;i<n;i++){
+    const el=document.createElement('i'), sz=2+Math.random()*Math.random()*8;
+    el.style.width=el.style.height=sz+'px'; el.style.margin=(-sz/2)+'px 0 0 '+(-sz/2)+'px';
+    const a=Math.random()*Math.PI*2, sp=(80+Math.random()*200)*(1.2-sz/12), vx=Math.cos(a)*sp, vy=Math.sin(a)*sp-70, T=.4+Math.random()*.35;
+    const fr=[];
+    for(let k=0;k<=10;k++){const t=T*k/10, x=vx*t, y=vy*t+.5*G*t*t, ang=Math.atan2(vy+G*t,vx), st=1+Math.min(2.4,Math.hypot(vx,vy+G*t)/150)*(1-k/10);
+      fr.push({transform:'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'rad) scaleX('+st.toFixed(2)+')'})}
+    wrap.append(el); el.animate(fr,{duration:T*1000,easing:'cubic-bezier(.25,.6,.4,1)',fill:'forwards'});
+  }
+}
+document.addEventListener('pointerdown',e=>{
+  if(e.button!==0||e.target.closest('input,textarea'))return;
+  if(!e.target.closest('#music'))slap();
+  const w=document.createElement('div');w.className='splash';
+  w.style.left=e.clientX+'px';w.style.top=e.clientY+'px';
+  const col=PAINT[Math.random()*PAINT.length|0]; w.style.color=col;
+  w.innerHTML='<div class="splat" style="--rot:'+(Math.random()*360|0)+'deg"><svg viewBox="0 0 84 84" fill="'+col+'">'+splatPath()+'</svg></div>';
+  (e.target.closest('dialog[open]')||document.body).append(w);
+  droplets(w);
+  setTimeout(()=>w.remove(),2000);
+},{passive:true});
+document.addEventListener('keydown',e=>{if($('workDlg').open&&e.key==='ArrowLeft')step(-1);if($('workDlg').open&&e.key==='ArrowRight')step(1)});
+new MutationObserver(()=>document.body.style.overflow=document.querySelector('dialog[open]')?'hidden':'').observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['open']});
+
+// ponytail: form has no backend yet; wire to Formspree/Telegram bot when contacts are final
+$('form').onsubmit=e=>{e.preventDefault();$('ok').hidden=false;e.target.reset();$('chosen').hidden=true};
+
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+render(SITE);
+
+/* ---------- Chopin: loops nocturnes; starts on the first tap (browsers block sound before that); mute is remembered ---------- */
+const TRACKS=[['music/chopin-op9-2.mp4','Nocturne Op. 9 No. 2'],['music/chopin-op27-2.mp4','Nocturne Op. 27 No. 2'],['music/chopin-op55-2.mp4','Nocturne Op. 55 No. 2'],['music/chopin-op9-1.mp4','Nocturne Op. 9 No. 1']];
+const audio=new Audio(); audio.preload='none'; audio.volume=.55;
+let track=0, muted=false;
+try{muted=localStorage.getItem('chopin-muted')==='1'}catch(e){}
+function setTrack(i){track=(i+TRACKS.length)%TRACKS.length;audio.src=TRACKS[track][0];$('musicTitle').textContent='Chopin · '+TRACKS[track][1]}
+function musicUi(){const on=!audio.paused;$('music').classList.toggle('playing',on);
+  $('musicState').textContent=on?'Грає зараз':'Музика вимкнена';$('music').setAttribute('aria-label',on?'Вимкнути музику':'Увімкнути музику')}
+function play(){if(!audio.src)setTrack(0);audio.play().then(musicUi).catch(musicUi)}
+function remember(v){muted=v;try{localStorage.setItem('chopin-muted',v?'1':'0')}catch(e){}}
+audio.onended=()=>{setTrack(track+1);play()};
+audio.onpause=audio.onplay=musicUi;
+$('music').onclick=()=>{if(audio.paused){remember(false);play()}else{remember(true);audio.pause()}};
+const firstTouch=e=>{if(e.target.closest&&e.target.closest('#music'))return;
+  removeEventListener('pointerdown',firstTouch,true);removeEventListener('keydown',firstTouch,true);if(!muted)play()};
+addEventListener('pointerdown',firstTouch,true);addEventListener('keydown',firstTouch,true);
+setTrack(0);
+
+/* ---------- Tumbleweed: now and then one painting rolls across the page like a tumbleweed; click it to open ---------- */
+function tumble(){
+  if(document.hidden||document.querySelector('dialog[open]')||!W.length)return;
+  const w=W[Math.random()*W.length|0], sz=Math.round(Math.min(130,Math.max(80,innerWidth*.09)));
+  const ltr=Math.random()<.5, dist=innerWidth+sz*2, dur=Math.max(6000,dist*7);
+  const y=innerHeight-sz-40-Math.random()*Math.min(220,innerHeight*.3);
+  const el=document.createElement('div');el.className='tumble';el.style.setProperty('--sz',sz+'px');
+  el.innerHTML='<div class="hop"><button type="button" aria-label="'+esc(w.t)+'"><img src="'+esc(w.img)+'" alt=""></button></div><span class="dust"></span>';
+  el.querySelector('button').onclick=()=>{el.remove();openWork(w.id)};
+  document.body.append(el);
+  const x0=ltr?-sz*1.5:innerWidth+sz*.5, x1=ltr?innerWidth+sz*.5:-sz*1.5;
+  const run=el.animate([{transform:`translate(${x0}px,${y}px)`},{transform:`translate(${x1}px,${y}px)`}],{duration:dur,easing:'linear'});
+  const hops=[];const n=5+Math.random()*3|0;
+  for(let i=0;i<=n;i++){const up=i%2?-(30+Math.random()*60)*(1-i/n/2):0;hops.push({transform:`translateY(${up}px)`,easing:i%2?'cubic-bezier(.5,0,.8,.5)':'cubic-bezier(.2,.5,.5,1)'})}
+  el.querySelector('.hop').animate(hops,{duration:dur,easing:'linear'});
+  const turns=dist/(Math.PI*sz)*360*(ltr?1:-1);
+  el.querySelector('button').animate([{transform:'rotate(0deg)'},{transform:`rotate(${turns}deg)`}],{duration:dur,easing:'linear'});
+  run.onfinish=()=>el.remove();
+}
+{
+  const nextTumble=d=>setTimeout(()=>{tumble();nextTumble(22000+Math.random()*23000)},d);
+  nextTumble(7000);
+}
+
+/* ---------- Admin panel: shown only to people who can edit this page ---------- */
+let draft=null, tab='works', sel=null, artifactNs=null, assetsNs=null, confirmDel=false;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const LOCAL=!window.claude&&/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+async function initAdmin(){
+  let can=LOCAL;
+  if(window.claude?.use){
+    const [user,art,as]=await Promise.all(['user','artifact','assets'].map(n=>window.claude.use(n).catch(()=>null)));
+    artifactNs=art; assetsNs=as;
+    can=!!art&&(user?(user.canEdit()||user.isOwner()):!!as);
+  }
+  if(!can)return;
+  isAdmin=true; $('adminFab').hidden=false; render(SITE);
+}
+initAdmin();
+
+function status(msg,err){const s=$('admStatus');s.textContent=msg;s.classList.toggle('err',!!err)}
+function setDirty(v){$('admSave').disabled=$('admReset').disabled=!v;$('adminFab').classList.toggle('dirty',v);
+  status(v?'Є незбережені зміни. Натисніть «Опублікувати на сайті».':'Змін немає.')}
+function touch(){setDirty(true);render(draft)}
+
+$('adminFab').onclick=()=>{if(!draft)draft=clone(SITE);openDlg($('adminDlg'));drawAdmin()};
+$('admTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.tab;
+  $('admTabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));confirmDel=false;drawAdmin()};
+$('admReset').onclick=()=>{draft=clone(SITE);sel=null;setDirty(false);render(SITE);drawAdmin()};
+
+const wById=id=>draft.works.find(w=>w.id===id);
+const rowHtml=(w,on)=>`<button class="adm-row${on?' on':''}" data-pick="${esc(w.id)}">
+  ${w.img?`<img src="${esc(w.img)}" alt="">`:'<span class="ph"></span>'}
+  <div style="min-width:0"><b>${esc(w.t||'Без назви')}</b><span>${esc(SERIES[w.s]?.t||'')} · ${w.st==='s'?'продано':w.st==='r'?'резерв':'доступна'}</span></div>
+  <span class="pr">${w.p?$$(w.p):'—'}</span></button>`;
+const bindRow=b=>b.onclick=()=>{sel=b.dataset.pick;confirmDel=false;drawAdmin()};
+
+function drawAdmin(){
+  const body=$('admBody');
+  if(tab==='works'){
+    body.innerHTML=`<div class="adm-list"><button class="btn dark sm" id="admAdd" style="margin:4px 4px 12px">+ Додати роботу</button>
+      ${draft.works.map(w=>rowHtml(w,w.id===sel)).join('')}</div><div class="adm-edit" id="admEdit"></div>`;
+    drawEditor();
+    $('admAdd').onclick=()=>{const id='w'+Date.now().toString(36);
+      draft.works.unshift({id,s:'mixtape',t:'Нова робота',m:'Холст, олія',z:'',y:String(new Date().getFullYear()),p:0,d:'',img:''});
+      sel=id;touch();drawAdmin()};
+    body.querySelectorAll('[data-pick]').forEach(bindRow);
+    return;
+  }
+  const ids=draft[tab], isSale=tab==='sales';
+  const rest=draft.works.filter(w=>!ids.includes(w.id)&&!(isSale&&w.st==='s'));
+  body.innerHTML=`<div class="adm-edit" style="grid-column:1/-1;max-width:820px;width:100%;margin:0 auto">
+    <p class="adm-note">${isSale?'Роботи в каруселі Sales. Ціна зі знижкою має бути меншою за звичайну, інакше робота не з’явиться в каруселі. Продані роботи не показуються.':'Роботи в каруселі «Топ робіт», у тому самому порядку, що й на сайті.'}</p>
+    <div style="margin-top:18px">${ids.map((id,i)=>{const w=wById(id);if(!w)return'';return `<div class="pick" data-id="${esc(id)}">
+      ${w.img?`<img src="${esc(w.img)}" alt="">`:'<span></span>'}
+      <div style="min-width:0"><b>${String(i+1).padStart(2,'0')} · ${esc(w.t)}</b><span>Ціна ${w.p?$$(w.p):'—'}${isSale&&w.sale>0&&w.p?` · зі знижкою ${$$(w.sale)} (−${Math.round((1-w.sale/w.p)*100)}%)`:''}</span></div>
+      <div class="ctl">${isSale?`<input type="number" min="0" step="10" id="sale-${esc(id)}" value="${w.sale||''}" placeholder="Знижка, $" aria-label="Ціна зі знижкою">`:''}
+        <button type="button" data-mv="-1" aria-label="Вище">↑</button><button type="button" data-mv="1" aria-label="Нижче">↓</button><button type="button" data-rm aria-label="Прибрати">✕</button></div></div>`}).join('')||'<p class="adm-note">Поки порожньо. Додайте роботу нижче.</p>'}</div>
+    <label for="admAddPick" style="margin-top:22px">Додати роботу<select id="admAddPick"><option value="">Оберіть роботу…</option>${rest.map(w=>`<option value="${esc(w.id)}">${esc(w.t)} — ${w.p?$$(w.p):'без ціни'}</option>`).join('')}</select></label></div>`;
+  $('admAddPick').onchange=e=>{const id=e.target.value;if(!id)return;ids.push(id);
+    if(isSale){const w=wById(id);if(!(w.sale>0))w.sale=Math.round(w.p*.8/10)*10||0}touch();drawAdmin()};
+  body.querySelectorAll('.pick').forEach(row=>{const id=row.dataset.id;
+    row.querySelector('[data-rm]').onclick=()=>{ids.splice(ids.indexOf(id),1);touch();drawAdmin()};
+    row.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const i=ids.indexOf(id),j=i+ +b.dataset.mv;
+      if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];touch();drawAdmin()});
+    const inp=row.querySelector('input');if(inp)inp.onchange=()=>{const v=Math.max(0,Math.round(+inp.value||0));const w=wById(id);if(v)w.sale=v;else delete w.sale;touch();drawAdmin()};
+  });
+}
+
+function drawEditor(){
+  const box=$('admEdit'), w=sel&&wById(sel);
+  if(!w){box.innerHTML='<p class="adm-note">Оберіть роботу ліворуч, щоб змінити фото, ціну чи опис, або додайте нову.</p>';return}
+  const opt=(v,l,c)=>`<option value="${v}"${c===v?' selected':''}>${l}</option>`;
+  box.innerHTML=`<form id="admForm" autocomplete="off">
+    <div class="adm-photo"><div class="pv">${w.img?`<img src="${esc(w.img)}" alt="">`:'<span class="eyebrow">Немає фото</span>'}</div>
+      <div><label for="admFile" class="btn sm" style="display:inline-flex;flex-direction:row;letter-spacing:.2em;color:var(--ink);cursor:pointer">${w.img?'Замінити фото':'Завантажити фото'}</label>
+      <input type="file" id="admFile" accept="image/jpeg,image/png,image/webp" hidden>
+      <p id="admFileMsg">JPG, PNG або WebP. Фото автоматично зменшиться до 1800 px.</p></div></div>
+    <label for="aT">Назва<input id="aT" value="${esc(w.t)}" required></label>
+    <div class="adm-grid">
+      <label for="aS">Колекція<select id="aS">${COLL_ORDER.map(k=>opt(k,esc(SERIES[k].t),w.s)).join('')}</select></label>
+      <label for="aSt">Статус<select id="aSt">${opt('','Доступна',w.st||'')}${opt('r','Резерв',w.st||'')}${opt('s','Продано',w.st||'')}</select></label>
+      <label for="aP">Ціна, $<input id="aP" type="number" min="0" step="10" value="${w.p||''}"></label>
+      <label for="aSale">Ціна зі знижкою, $<input id="aSale" type="number" min="0" step="10" value="${w.sale||''}" placeholder="Для каруселі Sales"></label>
+      <label for="aM">Техніка<input id="aM" value="${esc(w.m)}"></label>
+      <label for="aZ">Розмір<input id="aZ" value="${esc(w.z)}" placeholder="50×50 см"></label>
+      <label for="aY">Рік<input id="aY" value="${esc(w.y)}"></label>
+    </div>
+    <label for="aD">Опис під картиною<textarea id="aD" rows="6">${esc(w.d)}</textarea></label>
+    <div class="adm-actions" id="admActs">
+      <span class="adm-status">Зміни одразу видно на сторінці за вікном. Відвідувачі побачать їх після публікації.</span>
+      <button type="button" class="btn danger sm" id="admDel">Видалити роботу</button>
+    </div></form>`;
+  const f=$('admForm');
+  f.oninput=e=>{if(e.target.id==='admFile')return;
+    Object.assign(w,{t:$('aT').value,s:$('aS').value,st:$('aSt').value,p:Math.max(0,Math.round(+$('aP').value||0)),
+      sale:Math.max(0,Math.round(+$('aSale').value||0)),m:$('aM').value,z:$('aZ').value,y:$('aY').value,d:$('aD').value});
+    if(!w.st)delete w.st; if(!w.sale)delete w.sale;
+    touch();
+    const r=$('admBody').querySelector(`[data-pick="${CSS.escape(w.id)}"]`);
+    if(r){r.insertAdjacentHTML('afterend',rowHtml(w,true));r.remove();bindRow($('admBody').querySelector(`[data-pick="${CSS.escape(w.id)}"]`))}
+  };
+  f.onsubmit=e=>e.preventDefault();
+  $('admFile').onchange=e=>uploadPhoto(w,e.target.files[0]);
+  $('admDel').onclick=()=>{
+    if(confirmDel)return; confirmDel=true;
+    $('admActs').insertAdjacentHTML('beforeend',`<div class="confirm">Видалити «${esc(w.t)}» з сайту? <button type="button" class="btn danger sm" id="admDelYes">Так, видалити</button><button type="button" class="btn sm" id="admDelNo">Ні</button></div>`);
+    $('admDelNo').onclick=()=>{confirmDel=false;drawEditor()};
+    $('admDelYes').onclick=()=>{draft.works=draft.works.filter(x=>x.id!==w.id);draft.top=draft.top.filter(x=>x!==w.id);draft.sales=draft.sales.filter(x=>x!==w.id);
+      sel=null;confirmDel=false;touch();drawAdmin()};
+  };
+}
+
+async function shrink(file,max=1800){
+  const bmp=await createImageBitmap(file); const k=Math.min(1,max/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas'); c.width=Math.round(bmp.width*k); c.height=Math.round(bmp.height*k);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(r,'image/jpeg',.86));
+}
+async function uploadPhoto(w,file){
+  if(!file)return; $('admFileMsg').textContent='Завантажую…';
+  try{
+    const blob=await shrink(file);
+    if(assetsNs){const r=await assetsNs.upload(blob,{type:'image/jpeg'}); w.img='/_blob/'+r.id;}
+    else if(LOCAL){w.img=URL.createObjectURL(blob);}
+    else throw {code:'not_granted'};
+    touch(); drawEditor(); $('admFileMsg').textContent='Фото завантажено. Не забудьте опублікувати.';
+  }catch(err){
+    const m={too_large:'Файл завеликий (до 20 МБ).',unsupported_type:'Цей формат не підтримується. Використайте JPG або PNG.',quota_or_state:'Сховище фото заповнене.',rate_limited:'Забагато завантажень поспіль. Спробуйте за хвилину.',not_granted:'Завантаження фото тут недоступне.'}[err?.code];
+    $('admFileMsg').textContent=m||'Не вдалося завантажити фото. Спробуйте ще раз.';
+  }
+}
+
+// Republish the whole page with the edited data; template, styles and script are copied as authored.
+function buildPage(data){
+  const reset=document.head.querySelector('style')?.textContent||'';
+  const json=JSON.stringify(data).replace(/</g,'\\u003c');
+  const S='scr'+'ipt';
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+reset+'</style></head><body>'
+    +'<title>Smirnovich</title>\n'
+    +[...document.querySelectorAll('body link[href*="fonts.g"]')].map(l=>l.outerHTML).join('\n')+'\n'
+    +'<style id="app-css">'+$('app-css').textContent+'</style>\n'
+    +'<template id="tpl">'+tpl.innerHTML+'</template>\n'
+    +'<'+S+' type="application/json" id="site-data">'+json+'</'+S+'>\n'
+    +'<'+S+' id="app-js">'+$('app-js').textContent+'</'+S+'>'
+    +'</body></html>';
+}
+$('admSave').onclick=async()=>{
+  if(draft.works.some(w=>!w.img)){status('У деяких робіт немає фото. Додайте фото або видаліть ці роботи.',true);return}
+  if(LOCAL||!artifactNs){status('Це локальний перегляд: публікація працює лише на опублікованому сайті.',true);return}
+  $('admSave').disabled=true; status('Публікую…');
+  try{ await artifactNs.publish(buildPage(draft)); status('Опубліковано. Сторінка оновиться.'); }
+  catch(err){
+    const m={conflict:'Хтось щойно опублікував іншу версію. Сторінка перезавантажиться, внесіть зміни ще раз.',
+      not_writer:'У вас немає прав редагувати цей сайт.',not_granted:'Публікація недоступна в цьому перегляді.',
+      too_large:'Сторінка завелика для публікації.',rate_limited:'Забагато публікацій поспіль. Зачекайте хвилину.'}[err?.code];
+    status(m||'Не вдалося опублікувати. Спробуйте ще раз.',true); $('admSave').disabled=false;
+  }
+};
+</script>
+
+</body>
+</html>
