@@ -181,6 +181,19 @@ section{padding-block:var(--gap)}
 @media(max-width:1020px){.coll-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.coll-grid{grid-template-columns:1fr}}
 
+/* work in progress */
+.wip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.wip .card{padding:var(--pad);display:flex;flex-direction:column;gap:14px;transition:transform .5s var(--ease),box-shadow .5s}
+.wip .card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(0,0,0,.35)}
+.wip h3{font:400 clamp(30px,2.6vw,46px)/1.05 var(--serif);text-wrap:balance}
+.wip p{color:var(--ink-2);font-size:14px}
+.wip .formula{font:italic 400 clamp(19px,1.5vw,24px)/1.4 var(--serif);color:var(--ink);border-left:1px solid var(--ink);padding-left:16px}
+.wip .tag{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--line);padding:8px 12px;border-radius:999px}
+.wip .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sale);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media(min-width:1600px){.wip p{font-size:clamp(14px,.85vw,19px)}}
+@media(max-width:900px){.wip{grid-template-columns:1fr}}
+
 /* catalogue */
 .filters{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--pad) calc(var(--pad) * .8)}
 .filters button{padding:11px 18px;border:1px solid var(--line);font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);transition:.25s;border-radius:40px}
@@ -558,6 +571,27 @@ body.painting,body.painting *{user-select:none!important}
       <p class="lead" style="max-width:440px">Художник працює серіями. Кожна — окреме дослідження зі своїм питанням і своєю мовою.</p>
     </div>
     <div class="coll-grid" id="collGrid"></div>
+  </section>
+
+  <section id="wip">
+    <div class="card sec-head reveal">
+      <div><div class="eyebrow">Work in progress</div><h2 class="h2">Над чим я <em>працюю</em></h2></div>
+      <p class="lead" style="max-width:440px">Нові проєкти, які зараз у роботі. Слідкуйте за оновленнями.</p>
+    </div>
+    <div class="wip">
+      <div class="card reveal">
+        <span class="tag">У процесі</span>
+        <h3>Багатовимірний простір-час</h3>
+        <p>Філософська гіпотеза, що стане основою нової серії: наш тривимірний простір безперервно рухається вздовж часової координати T, а реальність, яку ми бачимо, лише проєкція більшої системи вимірів. Людина, рухаючись крізь «сферу ймовірних можливостей», своїм вибором визначає конкретну траєкторію подій.</p>
+        <p class="formula">X, Y, Z, T → F, H → G<br>реальність — це траєкторія.</p>
+      </div>
+      <div class="card reveal" style="--d:.12s">
+        <span class="tag">У процесі</span>
+        <h3>Нова Україна</h3>
+        <p>Архітектурний проєкт про відбудову країни після війни. Прагматизм, функціональність сучасної архітектури й практичність, сформовані з урахуванням досвіду сучасної війни.</p>
+        <p>Місто майбутнього, де технологічні рішення посилюють обороноздатність і безпеку людей, а функціональність, технологічність і безпека стають основою нового способу життя.</p>
+      </div>
+    </div>
   </section>
 
   <section id="catalogue">
