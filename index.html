@@ -54,7 +54,7 @@ section{padding-block:var(--gap)}
 .logo .mark{width:40px;height:40px;flex:none;transition:transform .5s var(--ease)}
 .logo .mark svg{width:100%;height:100%;display:block}
 .logo:hover .mark{transform:rotate(-14deg) scale(1.06)}
-@media(max-width:400px){.logo>span:last-child{letter-spacing:.24em}}
+@media(max-width:480px){.nav .card{padding:8px 8px 8px 12px;gap:8px}.logo{gap:9px}.logo .mark{width:34px;height:34px}.logo>span:last-child{letter-spacing:.16em;font-size:13px}.logo small{display:none}.nav .btn{padding:10px 12px;letter-spacing:.1em}.burger{width:38px;height:38px}}
 .logo small{display:block;font:italic 400 14px/1 var(--serif);letter-spacing:.02em;color:var(--ink-3);margin-top:5px}
 .nav ul{display:flex;gap:26px;list-style:none}
 .nav ul a{font:500 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);transition:.2s;position:relative}
@@ -125,6 +125,13 @@ section{padding-block:var(--gap)}
 .car-nav svg{width:16px;height:16px}
 .car-prog{width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-right:10px}
 .car-prog i{display:block;height:100%;width:30%;background:var(--ink);border-radius:2px;transition:transform .4s var(--ease)}
+.car-box{display:flex;flex-direction:column}
+.car-box .car-head{padding:clamp(20px,2.2vw,34px) clamp(20px,2.6vw,40px) 0;align-items:center}
+.car-box .car-head .eyebrow{margin-bottom:10px}
+.car-box .h2{font-size:clamp(32px,3.4vw,58px)}
+.car-box .track{margin-top:0;padding:clamp(16px,1.8vw,24px) clamp(20px,2.6vw,40px) clamp(20px,2.6vw,40px);scroll-padding-inline:clamp(20px,2.6vw,40px)}
+.car-box .slide{border:1px solid var(--line)}
+.car-box .slide:hover{box-shadow:0 24px 40px -28px rgba(0,0,0,.35)}
 .track{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(270px,31%,440px);gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;margin-top:var(--gap);padding-bottom:6px;scrollbar-width:none}
 .track::-webkit-scrollbar{display:none}
 .slide{scroll-snap-align:start;cursor:pointer;display:flex;flex-direction:column;position:relative;transition:transform .5s var(--ease),box-shadow .5s}
@@ -514,7 +521,8 @@ body.painting,body.painting *{user-select:none!important}
   </section>
 
   <section id="top">
-    <div class="card car-head reveal">
+    <div class="card car-box reveal">
+    <div class="car-head">
       <div><div class="eyebrow">Selected works</div><h2 class="h2">Топ <em>робіт</em></h2></div>
       <div class="car-nav" data-for="topTrack">
         <div class="car-prog"><i></i></div>
@@ -523,10 +531,12 @@ body.painting,body.painting *{user-select:none!important}
       </div>
     </div>
     <div class="track" id="topTrack"></div>
+    </div>
   </section>
 
   <section id="sales">
-    <div class="card car-head reveal">
+    <div class="card car-box reveal">
+    <div class="car-head">
       <div><div class="eyebrow">Special offer</div><h2 class="h2">Sales</h2></div>
       <div class="car-nav" data-for="saleTrack">
         <div class="car-prog"><i></i></div>
@@ -535,6 +545,7 @@ body.painting,body.painting *{user-select:none!important}
       </div>
     </div>
     <div class="track" id="saleTrack"></div>
+    </div>
   </section>
 
   <section id="collections">
