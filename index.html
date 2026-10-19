@@ -384,24 +384,58 @@ textarea{resize:vertical;min-height:96px}
   .pick{grid-template-columns:44px minmax(0,1fr)}.pick .ctl{grid-column:1/-1;justify-content:flex-end}
 }
 
-/* music */
-.music{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:999px;background:var(--card);color:var(--ink);box-shadow:0 14px 30px -14px rgba(0,0,0,.45);animation:rise .6s var(--ease);max-width:calc(100% - 40px)}
-.music .ic{width:40px;height:40px;flex:none;border-radius:50%;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .3s var(--ease)}
-.music:hover .ic{transform:scale(1.08)}
-.music svg{width:18px;height:18px}
-.music .on,.music.playing .off{display:none}
-.music.playing .on{display:block}
-.music .txt{display:flex;flex-direction:column;gap:3px;min-width:0;text-align:left}
-.music .txt b{font:italic 500 16px/1 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.music .txt span{font:500 9px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
-.bars{display:flex;align-items:flex-end;gap:2px;height:14px;flex:none}
+/* music player */
+.player{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;width:min(360px,calc(100vw - 40px));animation:rise .6s var(--ease)}
+.pl-bar{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px 10px 8px;border-radius:22px;background:var(--card);box-shadow:0 14px 30px -14px rgba(0,0,0,.45);overflow:hidden}
+.pl-play{width:42px;height:42px;flex:none;border-radius:50%;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .3s var(--ease)}
+.pl-play:hover{transform:scale(1.08)}
+.pl-play svg,.pl-btn svg{width:16px;height:16px}
+.pl-play .i-pause,.player.playing .pl-play .i-play{display:none}
+.player.playing .pl-play .i-pause{display:block}
+.pl-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
+.pl-info span{font:500 9px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:8px}
+.pl-info b{font:italic 500 16px/1.1 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-btn{width:32px;height:32px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-2);transition:background .2s,color .2s}
+.pl-btn:hover,.pl-btn[aria-expanded="true"]{background:var(--soft);color:var(--ink)}
+.pl-prog{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line);cursor:pointer}
+.pl-prog i{display:block;height:100%;width:0;background:var(--ink);transition:width .25s linear}
+.bars{display:inline-flex;align-items:flex-end;gap:2px;height:10px}
 .bars i{width:2px;height:30%;background:var(--ink-3);border-radius:1px}
-.music.playing .bars i{animation:bar 1s ease-in-out infinite alternate}
-.music.playing .bars i:nth-child(2){animation-delay:-.4s}.music.playing .bars i:nth-child(3){animation-delay:-.7s}.music.playing .bars i:nth-child(4){animation-delay:-.2s}
+.player.playing .bars i{animation:bar 1s ease-in-out infinite alternate}
+.player.playing .bars i:nth-child(2){animation-delay:-.4s}.player.playing .bars i:nth-child(3){animation-delay:-.7s}.player.playing .bars i:nth-child(4){animation-delay:-.2s}
 @keyframes bar{from{height:20%}to{height:100%}}
-@media(max-width:640px){.music{padding:6px}.music .txt,.music .bars{display:none}}
+.pl-list{position:absolute;left:0;right:0;bottom:calc(100% + 10px);background:var(--card);border-radius:22px;box-shadow:0 20px 40px -18px rgba(0,0,0,.45);padding:14px;list-style:none;transform-origin:bottom left;animation:pop .35s var(--ease)}
+.pl-list h4{font:500 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);padding:4px 8px 10px}
+.pl-list li button{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 8px;border-radius:12px;text-align:left}
+.pl-list li button:hover{background:var(--soft)}
+.pl-list li button.on{background:var(--ink);color:var(--card)}
+.pl-list li button.on small{color:#bdbcb8}
+.pl-list .n{font:italic 400 15px/1 var(--serif);color:var(--ink-3)}
+.pl-list li button.on .n{color:#bdbcb8}
+.pl-list b{font:500 16px/1.15 var(--serif)}
+.pl-list small{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.pl-credit{font-size:10px;color:var(--ink-3);padding:8px 8px 2px}
+@media(max-width:640px){.player{width:auto;right:auto}.pl-info,.pl-btn.pl-prev,.pl-btn.pl-next{display:none}.pl-bar{padding:6px 8px 9px 6px;gap:4px}.pl-list{width:min(330px,calc(100vw - 40px))}}
 
-/* tumbleweed painting */
+/* peeking helper */
+.helper{position:fixed;z-index:58;display:flex;align-items:flex-end;gap:10px;pointer-events:none}
+.helper .face{width:clamp(96px,9vw,130px);flex:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.28));pointer-events:auto;cursor:pointer}
+.helper .face svg{display:block;width:100%;height:auto}
+.helper .bubble{pointer-events:auto;max-width:260px;background:var(--card);border-radius:20px;padding:16px 18px;box-shadow:0 20px 40px -18px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:12px;opacity:0;transform:scale(.8);transition:opacity .3s .45s,transform .45s .45s var(--ease)}
+.helper.in .bubble{opacity:1;transform:none}
+.helper .bubble p{font:italic 400 19px/1.3 var(--serif);color:var(--ink)}
+.helper .bubble div{display:flex;flex-wrap:wrap;gap:8px}
+.helper .bubble .btn{padding:11px 16px}
+.helper.h-left{left:0;flex-direction:row}
+.helper.h-right{right:0;flex-direction:row-reverse}
+.helper.h-bottom{bottom:0;flex-direction:row;align-items:flex-end}
+.helper .eye{transform-box:fill-box;transform-origin:center}
+.helper .pupil{transition:transform .4s var(--ease)}
+.helper .lid{transform-box:fill-box;transform-origin:top;transform:scaleY(0);animation:blink 4.5s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(0)}95%{transform:scaleY(1)}}
+@media(max-width:640px){.helper .bubble{max-width:200px;padding:12px 14px}.helper .bubble p{font-size:16px}}
+
+/* tumbleweed painting *//* tumbleweed painting */
 .tumble{position:fixed;left:0;top:0;width:var(--sz);height:var(--sz);z-index:40;pointer-events:none}
 .tumble .hop{position:relative;width:var(--sz);height:var(--sz);will-change:transform}
 .tb,.tfly{display:block;width:var(--sz);height:var(--sz);padding:5px;background:var(--card);border-radius:12px;box-shadow:0 16px 28px -14px rgba(0,0,0,.55)}
@@ -508,12 +542,13 @@ body.painting,body.painting *{user-select:none!important}
         </div>
         <div class="stats intro contact-stats">
           <a href="https://www.instagram.com/thediaryofpainter/" target="_blank" rel="noopener"><b>@thediaryofpainter</b><span>Instagram ↗</span></a>
+          <a href="tel:+380686908175"><b>+380 68 690 81 75</b><span>Телефон</span></a>
           <button type="button" data-contact=""><b>Написати</b><span>Запит автору</span></button>
         </div>
       </div>
       <figure class="card hero-img">
         <img src="images/author.jpg" alt="Smirnovich">
-        <figcaption><span>«Дивитися на знайоме<br>з нестандартної сторони»</span><span class="hero-sign">Smirnovich</span></figcaption>
+        <figcaption><span>«Подивись на знайоме<br>з нестандартної сторони»</span><span class="hero-sign">Smirnovich</span></figcaption>
       </figure>
     </div>
 
@@ -649,8 +684,9 @@ body.painting,body.painting *{user-select:none!important}
           </div>
           <div class="contacts">
             <a href="https://www.instagram.com/thediaryofpainter/" target="_blank" rel="noopener">Instagram</a>
-            <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+            <a href="https://t.me/+380686908175" target="_blank" rel="noopener">Telegram</a>
             <a href="mailto:seekrat436@gmail.com">seekrat436@gmail.com</a>
+            <a href="tel:+380686908175">+380 68 690 81 75</a>
           </div>
         </div>
       </div>
@@ -704,8 +740,9 @@ body.painting,body.painting *{user-select:none!important}
       </div>
       <div class="contacts">
         <a href="https://www.instagram.com/thediaryofpainter/" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+        <a href="https://t.me/+380686908175" target="_blank" rel="noopener">Telegram</a>
         <a href="mailto:seekrat436@gmail.com">seekrat436@gmail.com</a>
+            <a href="tel:+380686908175">+380 68 690 81 75</a>
       </div>
     </div>
     <div class="main">
@@ -726,14 +763,20 @@ body.painting,body.painting *{user-select:none!important}
   </div>
 </dialog>
 
-<button class="music" id="music" aria-label="Увімкнути музику">
-  <span class="ic">
-    <svg class="off" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v4h3l4 3.5v-11L6 8z" fill="currentColor"/><path d="M13.5 7.5l4 5M17.5 7.5l-4 5"/></svg>
-    <svg class="on" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v4h3l4 3.5v-11L6 8z" fill="currentColor"/><path d="M13 7.5a3.5 3.5 0 010 5M15.5 5a7 7 0 010 10"/></svg>
-  </span>
-  <span class="txt"><span id="musicState">Музика вимкнена</span><b id="musicTitle">Chopin · Nocturnes</b></span>
-  <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-</button>
+<div class="player" id="player">
+  <ol class="pl-list" id="plList" hidden></ol>
+  <div class="pl-bar">
+    <button type="button" class="pl-play" id="plPlay" aria-label="Увімкнути музику">
+      <svg class="i-play" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>
+      <svg class="i-pause" viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
+    </button>
+    <div class="pl-info"><span><i class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></i><em id="plState" style="font-style:normal">Шопен</em></span><b id="plTitle">Nocturne Op. 9 No. 2</b></div>
+    <button type="button" class="pl-btn pl-prev" id="plPrev" aria-label="Попередній трек"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2.5h2v11H3zM13 2.5v11L5.5 8z"/></svg></button>
+    <button type="button" class="pl-btn pl-next" id="plNext" aria-label="Наступний трек"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 2.5h2v11h-2zM3 2.5v11L10.5 8z"/></svg></button>
+    <button type="button" class="pl-btn" id="plOpen" aria-label="Плейлист" aria-expanded="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h9M2 8h9M2 12h6M13 9v5"/><circle cx="12" cy="13.5" r="1.5" fill="currentColor"/></svg></button>
+    <div class="pl-prog" id="plProg"><i></i></div>
+  </div>
+</div>
 <button class="admin-fab" id="adminFab" hidden><i></i>Адмінка</button>
 <dialog id="ghLoginDlg">
   <div class="pop gh-login">
@@ -779,7 +822,7 @@ document.documentElement.classList.add('js');
 const tpl=document.getElementById('tpl');
 document.getElementById('site-data').before(tpl.content.cloneNode(true));
 const $=id=>document.getElementById(id);
-const PORTFOLIO='/portfolio.pdf';
+const PORTFOLIO='/portfolio.pdf?v=2026-10-19';
 document.querySelectorAll('[data-pf]').forEach(a=>a.href=PORTFOLIO);
 
 const SERIES={
@@ -999,7 +1042,7 @@ function droplets(wrap){
 // Splats stay where they landed on the page (they scroll with it); inside a popup they stay on screen.
 document.addEventListener('pointerdown',e=>{
   if(e.button!==0||e.target.closest('input,textarea'))return;
-  if(!e.target.closest('#music'))slap();
+  if(!e.target.closest('#player'))slap();
   const dlg=e.target.closest('dialog[open]');
   const w=document.createElement('div');w.className='splash';
   if(dlg){w.style.position='fixed';w.style.left=e.clientX+'px';w.style.top=e.clientY+'px'}
@@ -1016,7 +1059,7 @@ document.addEventListener('pointerdown',e=>{
 const SVGNS='http://www.w3.org/2000/svg';
 let layer=null, stroke=null, justPainted=false;
 function startPaint(e,col){
-  if(e.pointerType==='touch'||e.target.closest('dialog,.marquee,.track,select,button.tb,.tclose,.music,.admin-fab'))return;
+  if(e.pointerType==='touch'||e.target.closest('dialog,.marquee,.track,select,button.tb,.tclose,.player,.helper,.admin-fab'))return;
   stroke={col,pts:[[e.pageX,e.pageY]],g:null,moved:false};
 }
 function strokePath(pts,ox,oy){
@@ -1140,23 +1183,79 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 render(SITE);
 
-/* ---------- Chopin: loops nocturnes; starts on the first tap (browsers block sound before that); mute is remembered ---------- */
-const TRACKS=[['music/chopin-op9-2.mp4','Nocturne Op. 9 No. 2'],['music/chopin-op27-2.mp4','Nocturne Op. 27 No. 2'],['music/chopin-op55-2.mp4','Nocturne Op. 55 No. 2'],['music/chopin-op9-1.mp4','Nocturne Op. 9 No. 1']];
+/* ---------- Music player: Chopin nocturnes in a loop; starts on the first tap (browsers block sound before that); pause is remembered ---------- */
+const TRACKS=[['music/chopin-op9-2.mp4','Nocturne Op. 9 No. 2','Frank Levy'],['music/chopin-op27-2.mp4','Nocturne Op. 27 No. 2','Frank Levy'],['music/chopin-op55-2.mp4','Nocturne Op. 55 No. 2','Xuan He'],['music/chopin-op9-1.mp4','Nocturne Op. 9 No. 1','Olga Gurevich']];
+const DUR=['4:31','6:18','5:10','5:37'];
 const audio=new Audio(); audio.preload='none'; audio.volume=.55;
 let track=0, muted=false;
 try{muted=localStorage.getItem('chopin-muted')==='1'}catch(e){}
-function setTrack(i){track=(i+TRACKS.length)%TRACKS.length;audio.src=TRACKS[track][0];$('musicTitle').textContent='Chopin · '+TRACKS[track][1]}
-function musicUi(){const on=!audio.paused;$('music').classList.toggle('playing',on);
-  $('musicState').textContent=on?'Грає зараз':'Музика вимкнена';$('music').setAttribute('aria-label',on?'Вимкнути музику':'Увімкнути музику')}
+function drawList(){$('plList').innerHTML='<h4>Плейлист · Фредерік Шопен</h4>'+TRACKS.map((t,i)=>'<li><button type="button" data-tr="'+i+'"'+(i===track?' class="on"':'')+'><span class="n">'+(i+1)+'</span><span><b>'+t[1]+'</b><br><small>'+t[2]+'</small></span><small>'+DUR[i]+'</small></button></li>').join('')+'<p class="pl-credit">Записи Musopen, public domain</p>'}
+function setTrack(i){track=(i+TRACKS.length)%TRACKS.length;audio.src=TRACKS[track][0];$('plTitle').textContent=TRACKS[track][1];$('plProg').firstChild.style.width='0';drawList()}
+function musicUi(){const on=!audio.paused;$('player').classList.toggle('playing',on);$('plState').textContent=on?'Шопен · грає':'Шопен';$('plPlay').setAttribute('aria-label',on?'Пауза':'Увімкнути музику')}
 function play(){if(!audio.src)setTrack(0);audio.play().then(musicUi).catch(musicUi)}
 function remember(v){muted=v;try{localStorage.setItem('chopin-muted',v?'1':'0')}catch(e){}}
 audio.onended=()=>{setTrack(track+1);play()};
 audio.onpause=audio.onplay=musicUi;
-$('music').onclick=()=>{if(audio.paused){remember(false);play()}else{remember(true);audio.pause()}};
-const firstTouch=e=>{if(e.target.closest&&e.target.closest('#music'))return;
+audio.ontimeupdate=()=>{if(audio.duration)$('plProg').firstChild.style.width=(audio.currentTime/audio.duration*100)+'%'};
+$('plPlay').onclick=()=>{if(audio.paused){remember(false);play()}else{remember(true);audio.pause()}};
+$('plPrev').onclick=()=>{remember(false);setTrack(audio.currentTime>4?track:track-1);play()};
+$('plNext').onclick=()=>{remember(false);setTrack(track+1);play()};
+$('plOpen').onclick=()=>{const l=$('plList'),open=l.hidden;l.hidden=!open;$('plOpen').setAttribute('aria-expanded',open)};
+$('plList').onclick=e=>{const b=e.target.closest('[data-tr]');if(!b)return;remember(false);setTrack(+b.dataset.tr);play()};
+$('plProg').onclick=e=>{if(!audio.duration)return;const r=e.currentTarget.getBoundingClientRect();audio.currentTime=(e.clientX-r.left)/r.width*audio.duration};
+document.addEventListener('click',e=>{if(!$('plList').hidden&&!e.target.closest('#player')){$('plList').hidden=true;$('plOpen').setAttribute('aria-expanded','false')}});
+const firstTouch=e=>{if(e.target.closest&&e.target.closest('#player'))return;
   removeEventListener('pointerdown',firstTouch,true);removeEventListener('keydown',firstTouch,true);if(!muted)play()};
 addEventListener('pointerdown',firstTouch,true);addEventListener('keydown',firstTouch,true);
 setTrack(0);
+
+/* ---------- Peeking helper: now and then peeks in from a screen edge with an offer; "Так" opens the request form ---------- */
+const HELP=[
+  ['Шукаєте картину під свій інтер’єр? Допоможу підібрати.','Допоможіть підібрати картину під мій інтер’єр.'],
+  ['Подобається робота, але потрібен інший розмір? Автор напише на замовлення.','Хочу замовити картину на мій розмір.'],
+  ['Шукаєте подарунок? Підкажу, яка картина підійде.','Допоможіть обрати картину в подарунок.'],
+  ['Хочете побачити роботи наживо? Запросимо в майстерню.','Хочу подивитися роботи наживо в майстерні.'],
+  ['Є питання про ціну чи доставку? Відповім особисто.','Маю питання про ціну та доставку.'],
+  ['Хочете дізнатися про нові роботи першим?','Повідомте мене про нові роботи.']
+];
+const FACE='<svg viewBox="0 0 120 150" aria-hidden="true"><path d="M60 10c-27 0-44 20-44 50 0 34 18 70 44 70s44-36 44-70c0-30-17-50-44-50z" fill="#f2d7bd"/>'
+ +'<path d="M17 58C15 26 34 6 60 6s46 18 44 52c-4-18-14-30-26-34-10 8-30 10-46 6-8 6-12 16-15 28z" fill="#151515"/>'
+ +'<path d="M30 52q12-9 24-2M66 50q12-7 24 2" stroke="#151515" stroke-width="3" fill="none" stroke-linecap="round"/>'
+ +'<g class="eye"><ellipse cx="42" cy="66" rx="13" ry="14" fill="#fff" stroke="#151515" stroke-width="1.6"/><circle class="pupil" cx="42" cy="66" r="5.5" fill="#151515"/><rect class="lid" x="28" y="51" width="28" height="29" rx="13" fill="#f2d7bd"/></g>'
+ +'<g class="eye"><ellipse cx="78" cy="66" rx="13" ry="14" fill="#fff" stroke="#151515" stroke-width="1.6"/><circle class="pupil" cx="78" cy="66" r="5.5" fill="#151515"/><rect class="lid" x="64" y="51" width="28" height="29" rx="13" fill="#f2d7bd"/></g>'
+ +'<path d="M60 72q-5 16-3 22 4 3 8 0" stroke="#b98a6a" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+ +'<path d="M52 89q8 4 16 0" stroke="#151515" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
+ +'<path d="M57 90C45 95 29 94 23 80 19 70 21 55 28 42" stroke="#151515" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+ +'<path d="M63 90C75 95 91 94 97 80 101 70 99 55 92 42" stroke="#151515" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+ +'<path d="M52 106q8 5 16 0" stroke="#a8473a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
+let helperBusy=false, helperNo=0, helperIdx=Math.random()*HELP.length|0;
+function peek(){
+  if(helperBusy||helperNo>=3||document.hidden||document.querySelector('dialog[open]'))return;
+  helperBusy=true;
+  const [text,msg]=HELP[helperIdx++%HELP.length];
+  const sides=['left','right','bottom'], side=sides[Math.random()*sides.length|0];
+  const el=document.createElement('div'); el.className='helper h-'+side;
+  el.innerHTML='<div class="face">'+FACE+'</div><div class="bubble" role="dialog" aria-label="Помічник"><p>'+text+'</p><div><button type="button" class="btn dark h-yes">Так, допоможіть</button><button type="button" class="btn h-no">Ні, дякую</button></div></div>';
+  const sz=Math.min(130,Math.max(96,innerWidth*.09));
+  let from,to;
+  if(side==='left'){el.style.top=(25+Math.random()*40)+'%';from='translateX(-110%) rotate(-25deg)';to='translateX(-28%) rotate(18deg)'}
+  else if(side==='right'){el.style.top=(25+Math.random()*40)+'%';from='translateX(110%) rotate(25deg)';to='translateX(28%) rotate(-18deg)'}
+  else{el.style.left=(30+Math.random()*35)+'%';from='translateY(110%)';to='translateY(26%)'}
+  document.body.append(el);
+  const face=el.querySelector('.face');
+  const a=face.animate([{transform:from},{transform:to}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)',fill:'forwards'});
+  setTimeout(()=>el.classList.add('in'),30);
+  const look=e=>{const r=face.getBoundingClientRect();const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height*.45),d=Math.hypot(dx,dy)||1;
+    el.querySelectorAll('.pupil').forEach(p=>p.style.transform='translate('+(dx/d*4).toFixed(1)+'px,'+(dy/d*4).toFixed(1)+'px)')};
+  addEventListener('pointermove',look);
+  const leave=()=>{removeEventListener('pointermove',look);el.classList.remove('in');
+    face.animate([{transform:to},{transform:from}],{duration:450,easing:'ease-in',fill:'forwards'}).onfinish=()=>{el.remove();helperBusy=false}};
+  const auto=setTimeout(leave,14000);
+  el.querySelector('.h-no').onclick=()=>{clearTimeout(auto);helperNo++;leave()};
+  const yes=()=>{clearTimeout(auto);leave();later(()=>{openContact('');$('fMsg').value=msg;setTimeout(()=>$('fName').focus(),400)})};
+  el.querySelector('.h-yes').onclick=yes; face.onclick=yes;
+}
+{const nextPeek=d=>setTimeout(()=>{peek();nextPeek(45000+Math.random()*35000)},d);nextPeek(18000)}
 
 /* ---------- Tumbleweed: now and then one painting rolls across the page like a tumbleweed; click it to open ---------- */
 function tumble(){
