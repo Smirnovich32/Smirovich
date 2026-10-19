@@ -810,7 +810,7 @@ document.querySelectorAll('.car-nav').forEach(nav=>{
   let hover=false; tr.onmouseenter=()=>hover=true; tr.onmouseleave=()=>hover=false;
   setInterval(()=>{if(!hover&&!document.querySelector('dialog[open]'))go(1)},5000);
 });
-document.querySelectorAll('.mq').forEach(m=>m.innerHTML=COLL_ORDER.map(k=>`<span>${esc(SERIES[k].t)}</span>`).join('')+'<span>Оригінали</span><span>Смислографія</span>');
+document.querySelectorAll('.mq').forEach(m=>m.innerHTML=COLL_ORDER.map(k=>`<span>${esc(SERIES[k].t)}</span>`).join('')+'<span>Смислографія</span>');
 // Series strip: drifts on its own; on hover it stops and can be dragged, scrolled sideways or moved with the arrows.
 (()=>{
   const box=$('marquee'), track=box.querySelector('.mq-track');
