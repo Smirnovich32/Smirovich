@@ -545,7 +545,7 @@ textarea{resize:vertical;min-height:96px}
 .cert h3{font:500 clamp(26px,4vw,38px)/1 var(--serif);text-align:center;margin-top:6px;letter-spacing:.02em}
 .cert .en{font:italic 400 15px/1 var(--serif);text-align:center;color:#8b7a57;margin-top:-6px}
 .cert-body{display:grid;grid-template-columns:110px minmax(0,1fr);gap:18px;align-items:center;padding:14px 0;border-top:1px solid #e3d8c0;border-bottom:1px solid #e3d8c0}
-.cert-body img{width:110px;height:110px;object-fit:cover;border:6px solid #fff;box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}
+.cert-body img{width:110px;height:110px;object-fit:contain;background:#fff;border:6px solid #fff;box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}
 .cert-body dl div{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:3px 0}
 .cert-body dt{color:#8b7a57;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
 .cert-text{font:italic 400 15px/1.45 var(--serif);text-align:center;color:#4a4235}
@@ -562,7 +562,9 @@ textarea{resize:vertical;min-height:96px}
 .room .floor{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(#b9a68a,#a38f73)}
 .room .floor::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:#f2efe9}
 .room .sofa{position:absolute;bottom:14%;left:50%;transform:translateX(-50%)}
-.room .art{position:absolute;left:50%;transform:translateX(-50%);object-fit:cover;box-shadow:0 18px 26px -12px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.2);animation:imgIn .6s var(--ease)}
+.room .art-set{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;animation:imgIn .6s var(--ease)}
+.room .art-set i{display:block;background-repeat:no-repeat;box-shadow:0 18px 26px -12px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.2)}
+.room .art{position:absolute;left:50%;transform:translateX(-50%);object-fit:contain;box-shadow:0 18px 26px -12px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.2);animation:imgIn .6s var(--ease)}
 .room .lamp{position:absolute;top:0;left:50%;width:2px;background:#7d776d}
 
 /* brush cursor + paint splat */
@@ -1052,6 +1054,8 @@ const ICON={
   box:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M10 2 17 5.5v9L10 18 3 14.5v-9z"/><path d="M3 5.5 10 9l7-3.5M10 9v9"/></svg>'
 };
 const invNo=w=>{let x=0;for(const c of w.id)x=(x*31+c.charCodeAt(0))%997;return 'SM-'+(String(w.y||'').match(/\d{4}/)?.[0]||'0000')+'-'+String(x).padStart(3,'0')};
+// Every "W×H" in the size field is one canvas: «80×60 та 50×60 см» is a diptych.
+const panelsOf=w=>[...String(w.z||'').matchAll(/(\d+(?:[.,]\d+)?)\s*[×xх]\s*(\d+(?:[.,]\d+)?)/g)].map(m=>[parseFloat(m[1].replace(',','.')),parseFloat(m[2].replace(',','.'))]);
 const dimsOf=w=>{const m=String(w.z||'').match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)/);return m?[parseFloat(m[1].replace(',','.')),parseFloat(m[2].replace(',','.'))]:null};
 const SEAL='<svg class="seal" viewBox="0 0 100 100"><defs><path id="sealC" d="M50 50m-36 0a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/></defs><circle cx="50" cy="50" r="47" fill="#a8473a"/><circle cx="50" cy="50" r="43" fill="none" stroke="#f3d9d2" stroke-width=".8" stroke-dasharray="2 2"/><circle cx="50" cy="50" r="28" fill="none" stroke="#f3d9d2" stroke-width=".8"/><text font-family="Manrope,sans-serif" font-size="8.2" font-weight="600" letter-spacing="2.6" fill="#fbeee9"><textPath href="#sealC">ORIGINAL ARTWORK · SMIRNOVICH ·</textPath></text><g transform="translate(30 30) scale(1)"><path d="M27.2 12.6c-1.9-2.3-4.8-3.4-7.7-3.1-3.7.4-6.2 3.1-5.8 6.1.5 3.7 5.2 4.6 8.3 5.8 3.1 1.2 5.1 3.5 4.5 6.6-.6 3.1-3.9 5.1-7.6 4.7-2.9-.3-5.2-1.9-6.4-3.9" fill="none" stroke="#fbeee9" stroke-width="3" stroke-linecap="round"/></g></svg>';
 // Certificate markup: the popup shows a sample, the admin prints the real one for the buyer.
@@ -1071,16 +1075,36 @@ function showLayer(kind,w){
     L.innerHTML=close+certHtml(w,{sample:true})
       +'<p class="cap">Так виглядає сертифікат, який отримує власник. Оригінал підписує автор і передає разом із роботою.</p>';
   } else if(kind==='room'&&d){
-    L.innerHTML=close+'<div class="room"><div class="floor"></div></div><p class="cap">Масштаб: диван 200 см · картина '+esc(w.z)+'</p>';
+    L.innerHTML=close+'<div class="room"><div class="floor"></div></div><p class="cap">Масштаб: диван 200 см · '+({2:'диптих',3:'триптих'}[panelsOf(w).length]||(panelsOf(w).length>3?'поліптих':'картина'))+' '+esc(w.z)+'</p>';
   }
   wv.append(L);
   if(kind==='room'&&d){
     const room=L.querySelector('.room'), W=room.clientWidth, H=room.clientHeight, k=W/360; // the wall shown is 3.6 m wide
     const sofaW=200*k, sofaH=86*k, floorH=H*.14;
     room.insertAdjacentHTML('beforeend','<svg class="sofa" width="'+sofaW+'" height="'+sofaH+'" viewBox="0 0 200 86" preserveAspectRatio="none"><rect x="8" y="10" width="184" height="46" rx="10" fill="#8f877b"/><rect x="0" y="34" width="26" height="44" rx="9" fill="#857d71"/><rect x="174" y="34" width="26" height="44" rx="9" fill="#857d71"/><rect x="20" y="46" width="160" height="30" rx="7" fill="#9c9488"/><rect x="24" y="78" width="6" height="8" fill="#3d3833"/><rect x="170" y="78" width="6" height="8" fill="#3d3833"/></svg>');
-    const pw=d[0]*k, ph=d[1]*k, bottom=floorH+sofaH+22*k;
-    const top=Math.max(H*.06,H-bottom-ph);
-    room.insertAdjacentHTML('beforeend','<img class="art" src="'+esc(w.img)+'" alt="'+esc(w.t)+' на стіні" style="width:'+pw.toFixed(1)+'px;height:'+ph.toFixed(1)+'px;top:'+top.toFixed(1)+'px">');
+    const art=new Image(); art.className='art'; art.alt=w.t+' на стіні';
+    // Size from the photo's own proportions (never cropped); the stated size gives the scale.
+    art.onload=()=>{
+      const a=art.naturalWidth/art.naturalHeight, panels=panelsOf(w), base=H-(floorH+sofaH+22*k);
+      if(panels.length>1){ // diptych / triptych: each canvas hangs on its own, cut from the one photo by its width share
+        const gap=8, sumW=panels.reduce((t,p)=>t+p[0],0), maxH=Math.max(...panels.map(p=>p[1]));
+        const tot=Math.max(sumW,maxH*a), pg=(tot-sumW)/(panels.length-1); // the photo's own gap between canvases is skipped
+        const set=document.createElement('div'); set.className='art-set'; set.style.gap=(gap*k).toFixed(1)+'px';
+        set.style.top=Math.max(H*.06,base-maxH*k).toFixed(1)+'px'; let x=0;
+        panels.forEach(([pw,ph])=>{const el=document.createElement('i');
+          Object.assign(el.style,{width:(pw*k).toFixed(1)+'px',height:(ph*k).toFixed(1)+'px',backgroundImage:'url("'+art.src+'")',
+            backgroundSize:(tot/pw*100).toFixed(2)+'% 100%',backgroundPositionX:(x/(tot-pw)*100).toFixed(2)+'%'});
+          x+=pw+pg; set.append(el)});
+        return room.append(set);
+      }
+      const big=Math.max(...d), mat=/папір/i.test(w.m)?7:0, fr=mat?1.5:0; // works on paper hang in a white mat and thin frame
+      let cw,ch; if(a>=1){cw=big;ch=cw/a} else {ch=big;cw=ch*a}
+      const pw=(cw+2*(mat+fr))*k, ph=(ch+2*(mat+fr))*k, top=Math.max(H*.06,base-ph);
+      Object.assign(art.style,{width:pw.toFixed(1)+'px',height:ph.toFixed(1)+'px',top:top.toFixed(1)+'px'},
+        mat?{boxSizing:'border-box',padding:(mat*k).toFixed(1)+'px',background:'#fbfaf7',border:Math.max(2,fr*k).toFixed(1)+'px solid #262420'}:{});
+      room.append(art);
+    };
+    art.src=w.img;
   }
 }
 function hideLayer(){document.querySelectorAll('.wv-layer').forEach(l=>l.remove())}
@@ -1662,7 +1686,7 @@ function drawEditor(){
       <label for="aP">Ціна, $<input id="aP" type="number" min="0" step="10" value="${w.p||''}"></label>
       <label for="aSale">Ціна зі знижкою, $<input id="aSale" type="number" min="0" step="10" value="${w.sale||''}" placeholder="Для каруселі Sales"></label>
       <label for="aM">Техніка<input id="aM" value="${esc(w.m)}"></label>
-      <label for="aZ">Розмір<input id="aZ" value="${esc(w.z)}" placeholder="50×50 см"></label>
+      <label for="aZ">Розмір<input id="aZ" value="${esc(w.z)}" placeholder="50×50 см · диптих: 80×60 та 50×60 см"></label>
       <label for="aY">Рік<input id="aY" value="${esc(w.y)}"></label>
     </div>
     <label for="aD">Опис під картиною<textarea id="aD" rows="6">${esc(w.d)}</textarea></label>
