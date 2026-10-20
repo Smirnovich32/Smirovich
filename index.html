@@ -177,12 +177,13 @@ section{padding-block:var(--gap)}
 .empty{padding:40px var(--pad);color:var(--ink-3);font:italic 400 20px/1.4 var(--serif)}
 @media(max-width:640px){.track{grid-auto-columns:82%;--gap:12px}.car-prog{display:none}}
 
-.pr{display:inline-flex;align-items:baseline;gap:7px;font:600 22px/1 var(--serif);color:var(--card);background:var(--ink);padding:8px 15px 9px;box-shadow:0 8px 16px -10px rgba(0,0,0,.45);border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
-.pr .cur{font-size:.72em;font-weight:500;opacity:.75;margin-right:1px}
-.pr s{font-size:.72em;font-weight:500;color:rgba(255,255,255,.7);text-decoration-thickness:1px}
-.pr.sale{color:var(--card);background:var(--sale)}
-.pr.sold{color:var(--ink-3);background:transparent;border:1px solid var(--line);box-shadow:none;font-weight:500;font-size:17px}
-.pr.ask{font-size:17px;font-weight:500;color:var(--ink);background:var(--soft);box-shadow:none}
+.pr{display:inline-flex;align-items:baseline;gap:8px;font:600 20px/1 var(--sans);letter-spacing:-.01em;color:var(--ink);white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
+.pr .cur{font-weight:500;color:var(--ink-2);margin-right:1px}
+.pr s{font-size:.7em;font-weight:500;color:var(--ink-3);text-decoration-thickness:1px}
+.pr.sale{color:var(--sale)}
+.pr.sale .cur{color:var(--sale)}
+.pr.sold{font:600 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);padding:7px 10px;border:1px solid var(--line);border-radius:999px}
+.pr.ask{font-size:14px;font-weight:500;color:var(--ink-2)}
 .badge{position:absolute;top:22px;left:22px;z-index:2;font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;background:var(--card);padding:9px 12px;border-radius:999px;box-shadow:0 6px 16px -8px rgba(0,0,0,.3)}
 .badge.sold{background:var(--ink);color:var(--card)}
 .badge.sale{background:var(--sale);color:var(--card)}
@@ -239,7 +240,7 @@ section{padding-block:var(--gap)}
 .work h4{font:500 20px/1.15 var(--serif);overflow-wrap:break-word;hyphens:auto}
 .work .sub{font-size:12px;color:var(--ink-3)}
 .work .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:12px}
-.work .pr{font-size:19px;padding:7px 12px 8px}
+.work .pr{font-size:18px}
 .st{display:flex;align-items:center;gap:7px;color:var(--ink-2);font-size:10px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .st.sold::before{background:#b44}
@@ -324,7 +325,7 @@ dialog[open]{display:flex;align-items:center;justify-content:center;animation:fa
 .spec dt{color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;font-size:11px}
 .spec dd{text-align:right}
 .price{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:6px}
-.price .pr{font-size:clamp(30px,2.6vw,42px);padding:12px 22px 13px}
+.price .pr{font-size:clamp(28px,2.4vw,38px);letter-spacing:-.02em}
 .wv .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
 .wv .note{font-size:12px;color:var(--ink-3);display:flex;gap:10px;align-items:center}
 .wv .note::before{content:"";width:18px;height:1px;background:var(--ink-3)}
@@ -915,7 +916,7 @@ const $$=n=>'$'+Number(n).toLocaleString('uk-UA');
 const onSale=w=>SALES.includes(w.id)&&w.sale>0&&w.sale<w.p&&w.st!=='s';
 const off=w=>Math.round((1-w.sale/w.p)*100);
 const cur=w=>onSale(w)?w.sale:w.p;
-const money=n=>'<span><span class="cur">$</span>'+Number(n).toLocaleString('uk-UA')+'</span>';
+const money=n=>'<span><span class="cur">$</span>'+Number(n).toLocaleString('uk-UA').replace(/\s/g,'\u202f')+'</span>';
 const priceHtml=w=>w.st==='s'?'<span class="pr sold">Продано</span>'
   :onSale(w)?'<span class="pr sale"><s>'+$$(w.p)+'</s>'+money(w.sale)+'</span>':w.p?'<span class="pr">'+money(w.p)+'</span>':'<span class="pr ask">За запитом</span>';
 const badge=w=>w.st?`<span class="badge${w.st==='s'?' sold':''}">${ST[w.st]}</span>`:onSale(w)?`<span class="badge sale">−${off(w)}%</span>`:'';
