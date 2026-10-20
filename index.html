@@ -151,10 +151,12 @@ section{padding-block:var(--gap)}
 .empty{padding:40px var(--pad);color:var(--ink-3);font:italic 400 20px/1.4 var(--serif)}
 @media(max-width:640px){.track{grid-auto-columns:82%;--gap:12px}.car-prog{display:none}}
 
-.pr{font:500 22px/1 var(--serif);white-space:nowrap;font-variant-numeric:tabular-nums}
-.pr s{font-size:.75em;color:var(--ink-3);margin-right:8px}
-.pr.sale{color:var(--sale)}
-.pr.sold{color:var(--ink-3)}
+.pr{display:inline-flex;align-items:baseline;gap:7px;font:600 22px/1 var(--serif);color:var(--card);background:var(--ink);padding:8px 15px 9px;box-shadow:0 8px 16px -10px rgba(0,0,0,.45);border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.pr .cur{font-size:.72em;font-weight:500;opacity:.75;margin-right:1px}
+.pr s{font-size:.72em;font-weight:500;color:rgba(255,255,255,.7);text-decoration-thickness:1px}
+.pr.sale{color:var(--card);background:var(--sale)}
+.pr.sold{color:var(--ink-3);background:transparent;border:1px solid var(--line);box-shadow:none;font-weight:500;font-size:17px}
+.pr.ask{font-size:17px;font-weight:500;color:var(--ink);background:var(--soft);box-shadow:none}
 .badge{position:absolute;top:22px;left:22px;z-index:2;font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;background:var(--card);padding:9px 12px;border-radius:999px;box-shadow:0 6px 16px -8px rgba(0,0,0,.3)}
 .badge.sold{background:var(--ink);color:var(--card)}
 .badge.sale{background:var(--sale);color:var(--card)}
@@ -210,7 +212,7 @@ section{padding-block:var(--gap)}
 .work h4{font:500 20px/1.15 var(--serif);overflow-wrap:break-word;hyphens:auto}
 .work .sub{font-size:12px;color:var(--ink-3)}
 .work .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:12px}
-.work .pr{font-size:19px}
+.work .pr{font-size:19px;padding:7px 12px 8px}
 .st{display:flex;align-items:center;gap:7px;color:var(--ink-2);font-size:10px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .st::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .st.sold::before{background:#b44}
@@ -293,7 +295,7 @@ dialog[open]{display:flex;align-items:center;justify-content:center;animation:fa
 .spec dt{color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;font-size:11px}
 .spec dd{text-align:right}
 .price{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:6px}
-.price .pr{font-size:38px;font-weight:400}
+.price .pr{font-size:clamp(30px,2.6vw,42px);padding:12px 22px 13px}
 .wv .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
 .wv .note{font-size:12px;color:var(--ink-3);display:flex;gap:10px;align-items:center}
 .wv .note::before{content:"";width:18px;height:1px;background:var(--ink-3)}
@@ -429,7 +431,7 @@ textarea{resize:vertical;min-height:96px}
 @media(max-width:640px){.player{width:auto;right:auto}.pl-info,.pl-btn.pl-prev,.pl-btn.pl-next{display:none}.pl-bar{padding:6px 8px 9px 6px;gap:4px}.pl-list{width:min(330px,calc(100vw - 40px))}}
 
 /* peeking helper */
-.helper{position:fixed;z-index:58;display:flex;align-items:flex-end;gap:10px;pointer-events:none}
+.helper{position:absolute;z-index:2;display:flex;align-items:flex-end;gap:10px;pointer-events:none}
 .helper .face{width:clamp(96px,9vw,130px);flex:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.28));pointer-events:auto;cursor:pointer}
 .helper .face svg{display:block;width:100%;height:auto}
 .helper .bubble{pointer-events:auto;max-width:260px;background:var(--card);border-radius:20px;padding:16px 18px;box-shadow:0 20px 40px -18px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:12px;opacity:0;transform:scale(.8);transition:opacity .3s .45s,transform .45s .45s var(--ease)}
@@ -447,7 +449,7 @@ textarea{resize:vertical;min-height:96px}
 @media(max-width:640px){.helper .bubble{max-width:200px;padding:12px 14px}.helper .bubble p{font-size:16px}}
 
 /* tumbleweed painting *//* tumbleweed painting */
-.tumble{position:fixed;left:0;top:0;width:var(--sz);height:var(--sz);z-index:40;pointer-events:none}
+.tumble{position:absolute;left:0;top:0;width:var(--sz);height:var(--sz);z-index:1;pointer-events:none}
 .tumble .hop{position:relative;width:var(--sz);height:var(--sz);will-change:transform}
 .tb,.tfly{display:block;width:var(--sz);height:var(--sz);padding:5px;background:var(--card);border-radius:12px;box-shadow:0 16px 28px -14px rgba(0,0,0,.55)}
 .tb{pointer-events:auto;will-change:transform;transition:box-shadow .3s}
@@ -457,17 +459,20 @@ textarea{resize:vertical;min-height:96px}
 .tclose svg{width:12px;height:12px}
 .tumble:hover .tclose,.tclose:focus-visible{opacity:1;transform:none}
 @media(hover:none){.tclose{opacity:1;transform:none}}
-.tfly{position:fixed;z-index:45;pointer-events:none;will-change:transform}
+.tfly{position:absolute;z-index:3;pointer-events:none;will-change:transform}
 .tumble .dust{position:absolute;left:50%;bottom:-6px;width:70%;height:10px;margin-left:-35%;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(4px)}
 
 /* brush cursor + paint splat */
 html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,auto}
 a,button,label,select,[data-id],[data-coll],.coll,.track{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M29.5 2.5L17.5 14.5' stroke='%237a4a2a' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M19 13L14 18' stroke='%23fff' stroke-width='6.4'/%3E%3Cpath d='M19 13L14 18' stroke='%23a9a8a4' stroke-width='4.4'/%3E%3Cpath d='M14.8 17.2c-2.6-2.6-6.8-1.6-8 2.2-.8 2.6-1.8 5.4-3.6 9.4 4-1.8 6.8-2.8 9.4-3.6 3.8-1.2 4.8-5.4 2.2-8z' fill='%23151515' stroke='%23fff' stroke-width='1.2'/%3E%3Cpath d='M5.2 26.8c1.2-.6 2.4-1 3.4-1.2' stroke='%23a8473a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 29,pointer}
 input,textarea{cursor:text}
-body{overflow-x:clip}
+/* splashes, strokes and droplets live inside body and are clipped to it, so the page never grows sideways or past the footer */
+html{overflow-x:hidden}
+body{position:relative;overflow:clip}
+#fx{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:58}
 img{-webkit-user-drag:none;user-select:none}
 body.painting,body.painting *{user-select:none!important}
-.paint-layer{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:2147483646;overflow:visible}
+.paint-layer{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2147483646;overflow:visible}
 .paint-layer path{fill:none;stroke-linecap:round;stroke-linejoin:round}
 .paint-layer g.fade{animation:splashOut .8s ease 1.1s forwards}
 .splash{position:absolute;width:0;height:0;pointer-events:none;z-index:2147483647;animation:splashOut .8s ease 1.1s forwards}
@@ -800,8 +805,9 @@ const $$=n=>'$'+Number(n).toLocaleString('uk-UA');
 const onSale=w=>SALES.includes(w.id)&&w.sale>0&&w.sale<w.p&&w.st!=='s';
 const off=w=>Math.round((1-w.sale/w.p)*100);
 const cur=w=>onSale(w)?w.sale:w.p;
+const money=n=>'<span><span class="cur">$</span>'+Number(n).toLocaleString('uk-UA')+'</span>';
 const priceHtml=w=>w.st==='s'?'<span class="pr sold">Продано</span>'
-  :onSale(w)?`<span class="pr sale"><s>${$$(w.p)}</s>${$$(w.sale)}</span>`:w.p?`<span class="pr">${$$(w.p)}</span>`:'<span class="pr">За запитом</span>';
+  :onSale(w)?'<span class="pr sale"><s>'+$$(w.p)+'</s>'+money(w.sale)+'</span>':w.p?'<span class="pr">'+money(w.p)+'</span>':'<span class="pr ask">За запитом</span>';
 const badge=w=>w.st?`<span class="badge${w.st==='s'?' sold':''}">${ST[w.st]}</span>`:onSale(w)?`<span class="badge sale">−${off(w)}%</span>`:'';
 const stHtml=w=>`<span class="st${{s:' sold',r:' res'}[w.st]||''}">${ST[w.st]||'Доступна'}</span>`;
 const sub=w=>[w.m,w.z,w.y].filter(Boolean).map(esc).join(' · ');
@@ -1022,8 +1028,19 @@ function droplets(wrap){
   }
 }
 // Splats stay where they landed on the page (they scroll with it); inside a popup they stay on screen.
+let tapStart=null;
 document.addEventListener('pointerdown',e=>{
   if(e.button!==0||e.target.closest('input,textarea'))return;
+  if(e.pointerType==='touch'){tapStart={x:e.clientX,y:e.clientY,t:Date.now(),e};return}
+  splashAt(e);
+},{passive:true});
+document.addEventListener('pointerup',e=>{
+  if(e.pointerType!=='touch'||!tapStart)return;
+  const s=tapStart;tapStart=null;
+  if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<10&&Date.now()-s.t<500)splashAt(e);
+},{passive:true});
+addEventListener('scroll',()=>{tapStart=null},{passive:true});
+function splashAt(e){
   if(!e.target.closest('#player'))slap();
   const dlg=e.target.closest('dialog[open]');
   const w=document.createElement('div');w.className='splash';
@@ -1034,8 +1051,8 @@ document.addEventListener('pointerdown',e=>{
   (dlg||document.body).append(w);
   droplets(w);
   setTimeout(()=>w.remove(),2000);
-  startPaint(e,col);
-},{passive:true});
+  if(e.type==='pointerdown')startPaint(e,col);
+}
 
 // Hold the mouse and move to paint a brush stroke in the splat's colour; it fades like the splats.
 const SVGNS='http://www.w3.org/2000/svg';
@@ -1056,7 +1073,6 @@ document.addEventListener('pointermove',e=>{
   if(Math.hypot(x-p[0],y-p[1])<4)return;
   if(!stroke.g){
     if(!layer){layer=document.createElementNS(SVGNS,'svg');layer.classList.add('paint-layer');document.body.append(layer)}
-    layer.style.height=document.documentElement.scrollHeight+'px';
     stroke.g=document.createElementNS(SVGNS,'g');stroke.g.setAttribute('stroke',stroke.col);
     // a wide body plus two thin "bristle" lines give a painterly edge
     stroke.g.innerHTML='<path stroke-width="10" opacity=".88"/><path stroke-width="2.4" opacity=".55"/><path stroke-width="1.6" opacity=".45"/>';
@@ -1223,7 +1239,7 @@ function peek(){
   if(side==='left'){el.style.top=(25+Math.random()*40)+'%';from='translateX(-110%) rotate(-25deg)';to='translateX(-28%) rotate(18deg)'}
   else if(side==='right'){el.style.top=(25+Math.random()*40)+'%';from='translateX(110%) rotate(25deg)';to='translateX(28%) rotate(-18deg)'}
   else{el.style.left=(30+Math.random()*35)+'%';from='translateY(110%)';to='translateY(26%)'}
-  document.body.append(el);
+  fxLayer().append(el);
   const face=el.querySelector('.face');
   const a=face.animate([{transform:from},{transform:to}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)',fill:'forwards'});
   setTimeout(()=>el.classList.add('in'),30);
@@ -1240,6 +1256,7 @@ function peek(){
 {const nextPeek=d=>setTimeout(()=>{peek();nextPeek(45000+Math.random()*35000)},d);nextPeek(18000)}
 
 /* ---------- Tumbleweed: now and then one painting rolls across the page like a tumbleweed; click it to open ---------- */
+function fxLayer(){let l=$('fx');if(!l){l=document.createElement('div');l.id='fx';document.body.append(l)}return l}
 function tumble(){
   if(document.hidden||document.querySelector('dialog[open]')||document.querySelector('.tumble,.tfly')||!W.length)return;
   const w=W[Math.random()*W.length|0], sz=Math.round(Math.min(130,Math.max(80,innerWidth*.09)));
@@ -1248,7 +1265,7 @@ function tumble(){
   const el=document.createElement('div');el.className='tumble';el.style.setProperty('--sz',sz+'px');
   el.innerHTML='<div class="hop"><button type="button" class="tb" aria-label="Відкрити «'+esc(w.t)+'»"><img src="'+esc(w.img)+'" alt=""></button>'
     +'<button type="button" class="tclose" aria-label="Прибрати"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l8 8M10 2L2 10"/></svg></button></div><span class="dust"></span>';
-  document.body.append(el);
+  fxLayer().append(el);
   const tb=el.querySelector('.tb');
   const x0=ltr?-sz*1.5:innerWidth+sz*.5, x1=ltr?innerWidth+sz*.5:-sz*1.5;
   const run=el.animate([{transform:`translate(${x0}px,${y}px)`},{transform:`translate(${x1}px,${y}px)`}],{duration:dur,easing:'linear'});
@@ -1272,7 +1289,7 @@ function tumble(){
     const ang=Math.atan2(v[1],v[0])*180/Math.PI, end=Math.ceil(ang/360)*360+720;
     const fly=document.createElement('div'); fly.className='tfly'; fly.style.setProperty('--sz',sz+'px');
     fly.style.left=(cx-sz/2)+'px'; fly.style.top=(cy-sz/2)+'px'; fly.innerHTML='<img src="'+esc(w.img)+'" alt="">';
-    document.body.append(fly); el.remove();
+    fxLayer().append(fly); el.remove();
     const s=Math.min(innerWidth,innerHeight)*.6/sz, dx=innerWidth/2-cx, dy=innerHeight/2-cy;
     const a=fly.animate([
       {transform:`translate(0,0) rotate(${ang}deg) scale(1)`},
