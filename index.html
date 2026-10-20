@@ -27,7 +27,7 @@
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Manrope:wght@300;400;500;600&amp;family=Mrs+Saint+Delafield&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
 <style id="app-css">
 /* Gallery wall: grey ground, white rounded cards, serif display + clean sans. Single deliberate light look. */
 :root{
@@ -550,11 +550,11 @@ textarea{resize:vertical;min-height:96px}
 .cert-text{font:italic 400 15px/1.45 var(--serif);text-align:center;color:#4a4235}
 .cert-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .sig{display:flex;flex-direction:column;gap:2px}
-.sig .script{font:400 46px/1 "Mrs Saint Delafield",cursive;color:#1d2a52;transform:rotate(-4deg);margin-bottom:-6px}
+.sig .script{display:block;height:100px;width:auto;margin:0 0 2px -4px}
 .sig i{font:400 10px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#8b7a57;border-top:1px solid #c7b48a;padding-top:6px;font-style:normal}
 .seal{width:96px;height:96px;flex:none;transform:rotate(-12deg)}
 .sample{position:absolute;right:-38px;top:22px;transform:rotate(35deg);background:#a8473a;color:#fff;font:600 10px/1 var(--sans);letter-spacing:.3em;padding:7px 46px}
-@media(max-width:560px){.cert-body{grid-template-columns:80px minmax(0,1fr)}.cert-body img{width:80px;height:80px}.seal{width:76px;height:76px}.sig .script{font-size:38px}}
+@media(max-width:560px){.cert-body{grid-template-columns:80px minmax(0,1fr)}.cert-body img{width:80px;height:80px}.seal{width:76px;height:76px}.sig .script{height:76px}}
 
 /* painting on a wall, to scale */
 .room{position:relative;width:min(760px,100%);aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:linear-gradient(#e9e6e0,#dcd7cf);box-shadow:0 30px 60px -30px rgba(0,0,0,.45)}
@@ -1063,7 +1063,7 @@ function showLayer(kind,w){
       +'<h3>Сертифікат автентичності</h3><p class="en">Certificate of Authenticity</p>'
       +'<div class="cert-body"><img src="'+esc(w.img)+'" alt=""><dl>'+[['Назва',w.t],['Техніка',w.m],['Розмір',w.z],['Рік',w.y],['Інв. №',invNo(w)]].map(([a,b])=>'<div><dt>'+a+'</dt><dd>'+esc(b||'—')+'</dd></div>').join('')+'</dl></div>'
       +'<p class="cert-text">Цим засвідчую, що зазначений твір є оригінальною авторською роботою, виконаною мною особисто в єдиному екземплярі.</p>'
-      +'<div class="cert-foot"><div class="sig"><span class="script">Smirnovich</span><i>Підпис автора</i></div>'+SEAL+'</div></div></div>'
+      +'<div class="cert-foot"><div class="sig"><img class="script" src="images/signature.png" alt="Підпис Smirnovich"><i>Підпис автора</i></div>'+SEAL+'</div></div></div>'
       +'<p class="cap">Так виглядає сертифікат, який отримує власник. Оригінал підписує автор і передає разом із роботою.</p>';
   } else if(kind==='room'&&d){
     L.innerHTML=close+'<div class="room"><div class="floor"></div></div><p class="cap">Масштаб: диван 200 см · картина '+esc(w.z)+'</p>';
